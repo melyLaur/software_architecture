@@ -1,4 +1,4 @@
-import {useSession} from "~/composables/auth/useSession";
+import {useAuthSession} from "~/composables/auth/useAuthSession";
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 export type ApiRequestBody = Record<string, unknown> | BodyInit | null | undefined;
@@ -18,7 +18,7 @@ interface RequestOptions<T extends ApiRequestBody> {
 
 export class ApiClient {
     private getAuthHeaders(): HeadersInit {
-        const {getToken} = useSession();
+        const {getToken} = useAuthSession();
         const token = getToken();
 
         return token
