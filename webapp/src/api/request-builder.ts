@@ -83,9 +83,9 @@ export class RequestBuilder<
         })
 
         if (!response.success) {
-            throw new Error(response.errorCode);
+            // throw new Error(response.errorCode);
         }
-        return this.executeParse(this.responseSchema, response.data);
+        return this.executeParse(this.responseSchema, response);
     }
 
     private executeParse<D>(schema?: Schema, data?: D): D {
