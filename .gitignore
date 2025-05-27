@@ -1,1 +1,5 @@
 /.idea/
+/api/mvnw
+/api/mvnw.cmd
+/api/.gitattributes
+/api/.mvn/
