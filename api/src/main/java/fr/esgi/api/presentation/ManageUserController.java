@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/employees")
-@CrossOrigin(value = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class ManageUserController {
     private final GetAllEmployees getAllEmployees;
 

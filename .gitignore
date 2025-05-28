@@ -3,3 +3,6 @@
 /api/mvnw.cmd
 /api/.gitattributes
 /api/.mvn/
+/webapp/node_modules
+/webapp/.nuxt
+
