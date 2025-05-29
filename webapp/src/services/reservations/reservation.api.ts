@@ -22,19 +22,20 @@ export const useReservationApi = () => {
     }
 
     const fetchReservations = async () => {
+        const {currentUser} = useAuthSession()
         isLoading.value = true
         return new RequestBuilder(RESERVATION_API_URL)
-            .get('/reservations')
+            .get(`/employees/${currentUser.value?.id}/reservations`)
             .execute()
             .finally(() => (isLoading.value = false))
     }
 
     const reserveParkingSpace = async (requestDto: ReserveParkingSpaceDto) => {
-        const {getUser} = useAuthSession()
+        const {currentUser} = useAuthSession()
 
         isLoading.value = true
         return new RequestBuilder(RESERVATION_API_URL)
-            .post(`/employees/${getUser()?.id}/reservation`)
+            .post(`/employees/${currentUser.value?.id}/reservations`)
             .withBody<ReserveParkingSpaceBody>(reserveParkingSpaceBodySchema)
             .withResponse<ReserveParkingSpaceResponse>(reserveParkingSpaceResponseSchema)
             .execute({
