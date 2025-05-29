@@ -1,5 +1,6 @@
 package fr.esgi.api.model.reservation;
 
+import fr.esgi.api.model.reservation.exceptions.ReservationNotFoundException;
 import fr.esgi.api.model.reservation.place.Place;
 
 import java.time.LocalDate;

@@ -10,7 +10,7 @@ import fr.esgi.api.infrastructure.mappers.EmployeeMapper;
 import fr.esgi.api.infrastructure.mappers.PlaceMapper;
 import fr.esgi.api.infrastructure.mappers.ReservationMapper;
 import fr.esgi.api.model.reservation.Reservation;
-import fr.esgi.api.model.reservation.ReservationNotFoundException;
+import fr.esgi.api.model.reservation.exceptions.ReservationNotFoundException;
 import fr.esgi.api.model.reservation.ReservationRepository;
 import fr.esgi.api.model.reservation.employee.Employee;
 import fr.esgi.api.model.reservation.employee.EmployeeNotFoundException;

@@ -1,4 +1,4 @@
-package fr.esgi.api.model.reservation;
+package fr.esgi.api.model.reservation.exceptions;
 
 import fr.esgi.api.model.DomainException;
 
