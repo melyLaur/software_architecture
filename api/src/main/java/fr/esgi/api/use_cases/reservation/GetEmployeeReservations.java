@@ -10,6 +10,7 @@ import fr.esgi.api.presentation.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +24,14 @@ public class GetEmployeeReservations {
 
     public List<GetReservationResponse> getAll(UUID employeeId) {
         try {
+            LocalDate now = LocalDate.now();
+
             Employee employee = employeeRepository.getById(employeeId);
-            List<Reservation> reservations = employee.getReservations();
+            List<Reservation> reservations = employee
+                    .getReservations()
+                    .stream()
+                    .filter(reservation -> !reservation.getStartDate().isBefore(now))
+                    .toList();
             return reservations.stream().map(this::mapToGetReservationResponse).toList();
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getMessage());
