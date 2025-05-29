@@ -7,7 +7,8 @@ CREATE TABLE "employees"
     "employee_id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     "first_name"  varchar NOT NULL,
     "last_name"   varchar NOT NULL,
-    "role"        varchar NOT NULL DEFAULT 'EMPLOYEE'
+    "role"        varchar NOT NULL DEFAULT 'EMPLOYEE',
+    "email"       varchar NOT NULL
 );
 
 /* Table places */

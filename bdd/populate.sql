@@ -1,15 +1,15 @@
-INSERT INTO "employees" (employee_id, first_name, last_name)
+INSERT INTO "employees" (employee_id, first_name, last_name, role, email)
 VALUES
-    ('00000000-0000-0000-0000-000000000001', 'Jean', 'Dumont'),
-    ('00000000-0000-0000-0000-000000000002','Laura','Dumont'),
-    ('00000000-0000-0000-0000-000000000003','Luc','Morel'),
-    ('00000000-0000-0000-0000-000000000004','Elise','Barbier'),
-    ('00000000-0000-0000-0000-000000000005','Nora','Roche'),
-    ('00000000-0000-0000-0000-000000000006','Etienne','Giraud'),
-    ('00000000-0000-0000-0000-000000000007','Julie','Masson'),
-    ('00000000-0000-0000-0000-000000000008','Pascal','Garnier'),
-    ('00000000-0000-0000-0000-000000000009','Lina','Perrot'),
-    ('00000000-0000-0000-0000-000000000010','Henri','Vidal');
+    ('00000000-0000-0000-0000-000000000001', 'Jean', 'Dumont', 'EMPLOYEE', 'employee1@gmail.com'),
+    ('00000000-0000-0000-0000-000000000002','Laura','Dumont', 'EMPLOYEE', 'employee2@gmail.com'),
+    ('00000000-0000-0000-0000-000000000003','Luc','Morel', 'EMPLOYEE', 'employee3@gmail.com'),
+    ('00000000-0000-0000-0000-000000000004','Elise','Barbier', 'EMPLOYEE', 'employee4@gmail.com'),
+    ('00000000-0000-0000-0000-000000000005','Nora','Roche', 'EMPLOYEE', 'employee5@gmail.com'),
+    ('00000000-0000-0000-0000-000000000006','Etienne','Giraud', 'EMPLOYEE', 'employee6@gmail.com'),
+    ('00000000-0000-0000-0000-000000000007','Julie','Masson', 'EMPLOYEE', 'employee7@gmail.com'),
+    ('00000000-0000-0000-0000-000000000008','Pascal','Garnier', 'EMPLOYEE', 'employee8@gmail.com'),
+    ('00000000-0000-0000-0000-000000000009','Lina','Perrot', 'EMPLOYEE', 'employee9@gmail.com'),
+    ('00000000-0000-0000-0000-000000000010','Henri','Vidal', 'MANAGER', 'slimane.abdallah75@gmail.com');
 
 
 -- Places row A (ELECTRICAL)

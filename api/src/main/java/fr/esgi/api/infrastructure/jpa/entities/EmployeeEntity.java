@@ -24,6 +24,9 @@ public class EmployeeEntity {
     @Column(name = "role")
     private String role;
 
+    @Column(name = "email")
+    private String email;
+
     @OneToMany(mappedBy = "employee")
     private List<ReservationEntity> reservations;
 
@@ -66,6 +69,14 @@ public class EmployeeEntity {
 
     public void setReservations(List<ReservationEntity> reservations) {
         this.reservations = reservations;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override

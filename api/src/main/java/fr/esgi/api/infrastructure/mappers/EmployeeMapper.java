@@ -4,6 +4,7 @@ import fr.esgi.api.infrastructure.jpa.entities.EmployeeEntity;
 import fr.esgi.api.model.reservation.Reservation;
 import fr.esgi.api.model.reservation.employee.Employee;
 import fr.esgi.api.model.reservation.employee.EmployeeRole;
+import fr.esgi.api.model.reservation.employee.email.Email;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +16,8 @@ public class EmployeeMapper {
                 entity.getLastName(),
                 entity.getFirstName(),
                 EmployeeRole.valueOf(entity.getRole()),
-                reservations
+                reservations,
+                Email.of(entity.getEmail())
         );
     }
 
@@ -24,6 +26,7 @@ public class EmployeeMapper {
         entity.setFirstName(employee.getFirstName());
         entity.setLastName(employee.getLastName());
         entity.setRole(employee.getRole().name());
+        entity.setEmail(employee.getEmail().getValue());
         return entity;
     }
 }

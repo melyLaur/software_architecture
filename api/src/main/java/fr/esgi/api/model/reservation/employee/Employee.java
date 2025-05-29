@@ -1,6 +1,7 @@
 package fr.esgi.api.model.reservation.employee;
 
 import fr.esgi.api.model.reservation.Reservation;
+import fr.esgi.api.model.reservation.employee.email.Email;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,13 +13,15 @@ public class Employee {
     private String firstName;
     private EmployeeRole role;
     private List<Reservation> reservations;
+    private Email email;
 
-    public Employee(UUID id, String lastName, String firstName, EmployeeRole role, List<Reservation> reservations) {
+    public Employee(UUID id, String lastName, String firstName, EmployeeRole role, List<Reservation> reservations, Email email) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
         this.role = role;
         this.reservations = reservations;
+        this.email = email;
     }
 
     public UUID getId() {
@@ -59,6 +62,14 @@ public class Employee {
 
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    public Email getEmail() {
+        return email;
+    }
+
+    public void setEmail(Email email) {
+        this.email = email;
     }
 
     @Override

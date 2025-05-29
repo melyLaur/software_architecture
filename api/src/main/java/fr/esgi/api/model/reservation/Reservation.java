@@ -36,6 +36,11 @@ public class Reservation {
         return new Reservation(UUID.randomUUID(), employee, place, bookedFor, bookedFor, false);
     }
 
+    public static Reservation createForManager(Employee employee, Place place, LocalDate start) {
+        LocalDate end = start.plusDays(29);
+        return new Reservation(UUID.randomUUID(), employee, place, start, end, false);
+    }
+
     public UUID getId() {
         return id;
     }
