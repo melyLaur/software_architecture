@@ -1,7 +1,7 @@
-export type UserRole = 'employee' | 'manager' | 'secretary'
+export type UserRole = 'EMPLOYEE' | 'MANAGER' | 'SECRETARY'
 
 export interface AuthUser {
-    id: number
+    id: string
     name: string
     email: string
     role: UserRole
@@ -48,6 +48,7 @@ export const useAuthSession = () => {
     const setUser = (user: AuthUser) => {
         const localStorageService = useLocalStorageService();
         localStorageService.setItem(localStorageService.keys.UserKey, JSON.stringify(user));
+        currentUser.value = user;
     }
 
     const getUser = (): AuthUser | null => {
@@ -56,10 +57,16 @@ export const useAuthSession = () => {
         return user ? JSON.parse(user) : null;
     }
 
+    const currentUser = useState('currentUser', () => {
+        const user = getUser();
+        return user ? user : null;
+    })
+
     return {
         setToken,
         getToken,
         setUser,
         getUser,
+        currentUser,
     }
 }
