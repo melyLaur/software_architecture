@@ -10,10 +10,11 @@ import fr.esgi.api.infrastructure.mappers.EmployeeMapper;
 import fr.esgi.api.infrastructure.mappers.PlaceMapper;
 import fr.esgi.api.infrastructure.mappers.ReservationMapper;
 import fr.esgi.api.model.reservation.Reservation;
-import fr.esgi.api.model.reservation.exceptions.ReservationNotFoundException;
 import fr.esgi.api.model.reservation.ReservationRepository;
 import fr.esgi.api.model.reservation.employee.Employee;
 import fr.esgi.api.model.reservation.employee.EmployeeNotFoundException;
+import fr.esgi.api.model.reservation.employee.EmployeeRole;
+import fr.esgi.api.model.reservation.exceptions.ReservationNotFoundException;
 import fr.esgi.api.model.reservation.place.Place;
 import fr.esgi.api.model.reservation.place.PlaceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -80,6 +81,13 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     @Override
     public void delete(UUID id) {
         reservationJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteNotCheckInReservation() {
+        LocalDate now = LocalDate.now();
+        String name = EmployeeRole.EMPLOYEE.name();
+        reservationJpaRepository.deleteAllByCheckedInFalseAndStartDateAndEmployee_Role(now, name);
     }
 
     private List<Reservation> mappedReservationsEntitiesToDomain(EmployeeEntity entity) {

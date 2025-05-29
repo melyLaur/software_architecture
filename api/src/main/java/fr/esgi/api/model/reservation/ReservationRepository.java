@@ -16,4 +16,6 @@ public interface ReservationRepository {
     void update(Reservation reservation);
 
     void delete(UUID id);
+
+    void deleteNotCheckInReservation();
 }
