@@ -156,7 +156,7 @@ class ReservationServiceTest {
 
     @Test
     void should_accept_reservation_on_monday() {
-        LocalDate monday = LocalDate.of(2025, 6, 2); // C'est un lundi
+        LocalDate monday = LocalDate.of(2025, 6, 2);
         Place place = new Place(UUID.randomUUID(), PlaceIdentifier.of('A', (short)1), PlaceType.NORMAL, PlaceStatus.AVAILABLE);
         Employee employee = new Employee(UUID.randomUUID(), "Valid", "Employee", EmployeeRole.EMPLOYEE, List.of(), Email.of("valid@employee.com"));
 

@@ -1,8 +1,8 @@
 INSERT INTO "employees" (employee_id, first_name, last_name, role, email)
 VALUES
-    ('00000000-0000-0000-0000-000000000001', 'Jean', 'Dumont', 'EMPLOYEE', 'employee1@gmail.com'),
-    ('00000000-0000-0000-0000-000000000002','Laura','Dumont', 'EMPLOYEE', 'employee2@gmail.com'),
-    ('00000000-0000-0000-0000-000000000003','Luc','Morel', 'EMPLOYEE', 'employee3@gmail.com'),
+    ('00000000-0000-0000-0000-000000000001', 'Jean', 'Dumont', 'EMPLOYEE', 'c.lec1@fe.fr'),
+    ('00000000-0000-0000-0000-000000000002','Laura','Dumont', 'SECRETARY', 'c.lec2@fe.fr'),
+    ('00000000-0000-0000-0000-000000000003','Luc','Morel', 'MANAGER', 'c.lec3@fe.fr'),
     ('00000000-0000-0000-0000-000000000004','Elise','Barbier', 'EMPLOYEE', 'employee4@gmail.com'),
     ('00000000-0000-0000-0000-000000000005','Nora','Roche', 'EMPLOYEE', 'employee5@gmail.com'),
     ('00000000-0000-0000-0000-000000000006','Etienne','Giraud', 'EMPLOYEE', 'employee6@gmail.com'),
