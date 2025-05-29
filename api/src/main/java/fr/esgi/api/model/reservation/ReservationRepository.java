@@ -12,4 +12,8 @@ public interface ReservationRepository {
     boolean isExistByPlaceAndDate(Place place, LocalDate bookedFor);
 
     Reservation findById(UUID id) throws ReservationNotFoundException;
+
+    void update(Reservation reservation);
+
+    void delete(UUID id);
 }

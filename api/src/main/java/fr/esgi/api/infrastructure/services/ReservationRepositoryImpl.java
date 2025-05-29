@@ -61,10 +61,25 @@ public class ReservationRepositoryImpl implements ReservationRepository {
 
         List<Reservation> reservations = mappedReservationsEntitiesToDomain(entity.getEmployee());
         Employee employee = employeeMapper.toDomain(entity.getEmployee(), reservations);
-
         Place place = placeMapper.toDomain(entity.getPlace());
 
         return reservationMapper.toDomain(entity, employee, place);
+    }
+
+    @Override
+    public void update(Reservation reservation) {
+        EmployeeEntity employeeEntity = employeeJpaRepository.findById(reservation.getEmployee().getId()).orElseThrow(EmployeeNotFoundException::new);
+        PlaceEntity placeEntity = placeJpaRepository.findById(reservation.getPlace().getId()).orElseThrow(PlaceNotFoundException::new);
+
+        ReservationEntity entity = reservationMapper.toEntity(reservation, employeeEntity, placeEntity);
+        entity.setId(reservation.getId());
+
+        reservationJpaRepository.save(entity);
+    }
+
+    @Override
+    public void delete(UUID id) {
+        reservationJpaRepository.deleteById(id);
     }
 
     private List<Reservation> mappedReservationsEntitiesToDomain(EmployeeEntity entity) {
