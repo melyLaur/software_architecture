@@ -3,7 +3,7 @@
 definePageMeta({
   layout: 'main-layout',
   middleware: ['role'],
-  roles: ['manager']
+  roles: ['MANAGER']
 })
 
 

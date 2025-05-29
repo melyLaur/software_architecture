@@ -2,6 +2,7 @@ package fr.esgi.api.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -14,11 +15,21 @@ public class EmployeeEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "lastName")
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "firstName")
+    @Column(name = "first_name")
     private String firstName;
+
+    @Column(name = "role")
+    private String role;
+
+    @Column(name = "email")
+    private String email;
+
+    @OneToMany(mappedBy = "employee")
+    private List<ReservationEntity> reservations;
+
 
     public UUID getId() {
         return id;
@@ -42,6 +53,30 @@ public class EmployeeEntity {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public List<ReservationEntity> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<ReservationEntity> reservations) {
+        this.reservations = reservations;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
