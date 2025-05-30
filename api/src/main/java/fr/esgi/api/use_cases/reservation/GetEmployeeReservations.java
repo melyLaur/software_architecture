@@ -31,7 +31,7 @@ public class GetEmployeeReservations {
             List<Reservation> reservations = employee
                     .getReservations()
                     .stream()
-                    .filter(reservation -> !reservation.getBookedFor().isBefore(now))
+                    .filter(reservation -> !reservation.getBookedFor().isBefore(now) && !reservation.isCheckedIn())
                     .sorted(Comparator.comparing(Reservation::getBookedFor))
                     .toList();
             return reservations.stream().map(this::mapToGetReservationResponse).toList();
