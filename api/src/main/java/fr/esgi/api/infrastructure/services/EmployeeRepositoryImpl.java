@@ -57,9 +57,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     }
 
     @Override
-    public void delete(Employee employee) {
-        EmployeeEntity entity = this.employeeJpaRepository.findById(employee.getId()).orElseThrow(EmployeeNotFoundException::new);
-        this.employeeJpaRepository.delete(entity);
+    public void deleteById(UUID id) throws EmployeeNotFoundException {
+        this.employeeJpaRepository.deleteById(id);
     }
 
     @Override

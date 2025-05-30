@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/employees")
 @CrossOrigin(origins = "*")
 public class ManageUserController {
     private final GetAllEmployees getAllEmployees;
@@ -30,22 +29,22 @@ public class ManageUserController {
         this.getEmployeeById = getEmployeeById;
     }
 
-    @GetMapping
+    @GetMapping("/employees")
     public List<GetEmployeeResponse> getAllEmployees() {
         return this.getAllEmployees.getAll();
     }
 
-    @PostMapping("/add-employee")
+    @PostMapping("/employees")
     public AddEmployeeResponse createEmployee(@Valid @RequestBody AddEmployeeRequest addEmployeeRequest) {
         return this.addEmployee.execute(addEmployeeRequest);
     }
 
-    @DeleteMapping("/delete-employee")
+    @DeleteMapping("/employees")
     public DeleteEmployeeResponse deleteEmployee(@RequestParam UUID employeeIdToDelete) {
         return this.deleteEmployee.execute(employeeIdToDelete);
     }
 
-    @GetMapping("/{employeeId}")
+    @GetMapping("/employees/{employeeId}")
     public GetEmployeeResponse getEmployeeById(@PathVariable UUID employeeId) {
         return this.getEmployeeById.execute(employeeId);
     }
