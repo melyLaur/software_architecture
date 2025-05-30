@@ -1,13 +1,12 @@
 package fr.esgi.api.presentation;
 
 import fr.esgi.api.dtos.requests.AddEmployeeRequest;
+import fr.esgi.api.dtos.requests.UpdateEmployeeRequest;
 import fr.esgi.api.dtos.responses.AddEmployeeResponse;
 import fr.esgi.api.dtos.responses.DeleteEmployeeResponse;
 import fr.esgi.api.dtos.responses.GetEmployeeResponse;
-import fr.esgi.api.use_cases.manage_employees.AddEmployee;
-import fr.esgi.api.use_cases.manage_employees.DeleteEmployee;
-import fr.esgi.api.use_cases.manage_employees.GetAllEmployees;
-import fr.esgi.api.use_cases.manage_employees.GetEmployeeById;
+import fr.esgi.api.dtos.responses.UpdateEmployeeResponse;
+import fr.esgi.api.use_cases.manage_employees.*;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +20,14 @@ public class ManageUserController {
     private final AddEmployee addEmployee;
     private final DeleteEmployee deleteEmployee;
     private final GetEmployeeById getEmployeeById;
+    private final UpdateEmployee updateEmployee;
 
-    public ManageUserController(GetAllEmployees getAllEmployees, AddEmployee addEmployee, DeleteEmployee deleteEmployee, GetEmployeeById getEmployeeById) {
+    public ManageUserController(GetAllEmployees getAllEmployees, AddEmployee addEmployee, DeleteEmployee deleteEmployee, GetEmployeeById getEmployeeById, UpdateEmployee updateEmployee) {
         this.getAllEmployees = getAllEmployees;
         this.addEmployee = addEmployee;
         this.deleteEmployee = deleteEmployee;
         this.getEmployeeById = getEmployeeById;
+        this.updateEmployee = updateEmployee;
     }
 
     @GetMapping("/employees")
@@ -47,5 +48,10 @@ public class ManageUserController {
     @GetMapping("/employees/{id}")
     public GetEmployeeResponse getEmployeeById(@PathVariable UUID id) {
         return this.getEmployeeById.execute(id);
+    }
+
+    @PutMapping("/employees/{id}")
+    public UpdateEmployeeResponse updateEmployee(@PathVariable UUID id, @RequestBody UpdateEmployeeRequest updateEmployeeRequest) {
+        return this.updateEmployee.execute(id, updateEmployeeRequest);
     }
 }

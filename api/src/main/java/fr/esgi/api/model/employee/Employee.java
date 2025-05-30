@@ -34,6 +34,13 @@ public class Employee {
         this.email = email;
     }
 
+    public void update(String lastName, String firstName, EmployeeRole role, Email email) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.role = role;
+        this.email = email;
+    }
+
     public static Employee create(AddEmployeeRequest addEmployeeRequest) {
         return new Employee(
                 addEmployeeRequest.lastName(),

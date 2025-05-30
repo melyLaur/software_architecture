@@ -11,4 +11,5 @@ public interface EmployeeRepository {
     Employee save(Employee employee) throws EmployeeNotFoundException;
     void deleteById(UUID employeeId) throws EmployeeNotFoundException;
     Optional<Employee> findByEmail(String email);
+    Employee update(Employee employee) throws EmployeeNotFoundException;
 }

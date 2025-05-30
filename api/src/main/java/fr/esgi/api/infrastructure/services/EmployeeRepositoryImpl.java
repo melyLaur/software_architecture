@@ -66,6 +66,14 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
         return employeeJpaRepository.findByEmail(email).map(entity -> employeeMapper.toDomain(entity, mappedReservationsEntitiesToDomain(entity)));
     }
 
+    @Override
+    public Employee update(Employee employee) throws EmployeeNotFoundException {
+        EmployeeEntity updatedEntity = employeeMapper.toEntity(employee);
+        updatedEntity.setId(employee.getId());
+        EmployeeEntity saved = employeeJpaRepository.save(updatedEntity);
+        List<Reservation> reservations = mappedReservationsEntitiesToDomain(saved);
+        return employeeMapper.toDomain(saved, reservations);
+    }
 
     private List<Reservation> mappedReservationsEntitiesToDomain(EmployeeEntity entity) {
         List<ReservationEntity> reservations = entity.getReservations();
