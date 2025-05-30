@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 
-public record CreateReservationRequest(
+public record CreateReservationEmployeeRequest(
         @NotNull Boolean electricalPlaceNeeded,
         @NotNull LocalDate bookedFor
 ) {

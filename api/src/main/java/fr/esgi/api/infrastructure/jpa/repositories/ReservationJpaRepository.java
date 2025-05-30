@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public interface ReservationJpaRepository extends JpaRepository<ReservationEntity, UUID> {
-    boolean existsByPlace_IdAndStartDate(UUID placeId, LocalDate startDate);
+    boolean existsByPlace_IdAndBookedFor(UUID placeId, LocalDate startDate);
 
-    void deleteAllByCheckedInFalseAndStartDateAndEmployee_Role(LocalDate startDate, String role);
+    void deleteAllByCheckedInFalseAndBookedForAndEmployee_Role(LocalDate startDate, String role);
 }

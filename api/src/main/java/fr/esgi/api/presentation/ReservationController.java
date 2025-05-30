@@ -1,6 +1,7 @@
 package fr.esgi.api.presentation;
 
-import fr.esgi.api.dtos.requests.CreateReservationRequest;
+import fr.esgi.api.dtos.requests.CreateReservationEmployeeRequest;
+import fr.esgi.api.dtos.requests.CreateReservationManagerRequest;
 import fr.esgi.api.dtos.responses.GetReservationResponse;
 import fr.esgi.api.use_cases.reservation.CancelReservation;
 import fr.esgi.api.use_cases.reservation.GetEmployeeReservations;
@@ -31,9 +32,14 @@ public class ReservationController {
     }
 
     @PostMapping(value = "employees/{id}/reservations")
-    public GetReservationResponse process(@PathVariable UUID id, @Valid @RequestBody CreateReservationRequest createReservationRequest) {
-        return this.makeReservation.process(id, createReservationRequest);
+    public GetReservationResponse processForEmployee(@PathVariable UUID id, @Valid @RequestBody CreateReservationEmployeeRequest createReservationEmployeeRequest) {
+        return this.makeReservation.processForEmployee(id, createReservationEmployeeRequest);
     }
+
+//    @PostMapping(value = "managers/{id}/reservations")
+//    public GetReservationResponse processForManager(@PathVariable UUID id, @Valid @RequestBody CreateReservationManagerRequest createReservationManagerRequest) {
+//        return this.makeReservation.processForManager(id, createReservationManagerRequest);
+//    }
 
     @DeleteMapping(value = "reservations/{id}")
     public void deleteReservation(@PathVariable UUID id) {

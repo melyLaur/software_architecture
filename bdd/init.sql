@@ -28,8 +28,7 @@ CREATE TABLE "reservations"
     "reservation_id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     "employee_id"    uuid    NOT NULL,
     "place_id"       uuid    NOT NULL,
-    "start_date"     date    NOT NULL,
-    "end_date"       date    NOT NULL,
+    "booked_for"     date    NOT NULL,
     "is_checked_in"  boolean NOT NULL,
     FOREIGN KEY ("employee_id") REFERENCES "employees" ("employee_id"),
     FOREIGN KEY ("place_id") REFERENCES "places" ("place_id")

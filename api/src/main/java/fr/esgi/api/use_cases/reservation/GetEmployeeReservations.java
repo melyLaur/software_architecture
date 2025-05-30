@@ -30,7 +30,7 @@ public class GetEmployeeReservations {
             List<Reservation> reservations = employee
                     .getReservations()
                     .stream()
-                    .filter(reservation -> !reservation.getStartDate().isBefore(now))
+                    .filter(reservation -> !reservation.getBookedFor().isBefore(now))
                     .toList();
             return reservations.stream().map(this::mapToGetReservationResponse).toList();
         } catch (DomainException e) {
@@ -43,7 +43,7 @@ public class GetEmployeeReservations {
 
         return new GetReservationResponse(
                 reservation.getId(),
-                reservation.getStartDate(),
+                reservation.getBookedFor(),
                 reservation.getPlace().getIdentifier().toString(),
                 isElectric
         );

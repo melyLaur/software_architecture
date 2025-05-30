@@ -15,8 +15,7 @@ public class ReservationMapper {
                 entity.getId(),
                 employee,
                 place,
-                entity.getStartDate(),
-                entity.getEndDate(),
+                entity.getBookedFor(),
                 entity.checkedIn()
         );
     }
@@ -25,8 +24,7 @@ public class ReservationMapper {
         return new Reservation(
                 entity.getId(),
                 place,
-                entity.getStartDate(),
-                entity.getEndDate(),
+                entity.getBookedFor(),
                 entity.checkedIn()
         );
     }
@@ -36,8 +34,7 @@ public class ReservationMapper {
         ReservationEntity entity = new ReservationEntity();
         entity.setEmployee(employeeEntity);
         entity.setPlace(placeEntity);
-        entity.setStartDate(reservation.getStartDate());
-        entity.setEndDate(reservation.getEndDate());
+        entity.setBookedFor(entity.getBookedFor());
         entity.setCheckedIn(reservation.isCheckedIn());
         return entity;
     }

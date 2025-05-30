@@ -53,7 +53,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
 
     @Override
     public boolean isExistByPlaceAndDate(Place place, LocalDate bookedFor) {
-        return this.reservationJpaRepository.existsByPlace_IdAndStartDate(place.getId(), bookedFor);
+        return this.reservationJpaRepository.existsByPlace_IdAndBookedFor(place.getId(), bookedFor);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     public void deleteNotCheckInReservation() {
         LocalDate now = LocalDate.now();
         String name = EmployeeRole.EMPLOYEE.name();
-        reservationJpaRepository.deleteAllByCheckedInFalseAndStartDateAndEmployee_Role(now, name);
+        reservationJpaRepository.deleteAllByCheckedInFalseAndBookedForAndEmployee_Role(now, name);
     }
 
     private List<Reservation> mappedReservationsEntitiesToDomain(EmployeeEntity entity) {
