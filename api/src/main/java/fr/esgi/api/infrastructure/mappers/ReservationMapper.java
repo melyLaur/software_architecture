@@ -17,7 +17,7 @@ public class ReservationMapper {
                 place,
                 entity.getStartDate(),
                 entity.getEndDate(),
-                entity.isCheckedIn()
+                entity.checkedIn()
         );
     }
 
@@ -27,7 +27,7 @@ public class ReservationMapper {
                 place,
                 entity.getStartDate(),
                 entity.getEndDate(),
-                entity.isCheckedIn()
+                entity.checkedIn()
         );
     }
 

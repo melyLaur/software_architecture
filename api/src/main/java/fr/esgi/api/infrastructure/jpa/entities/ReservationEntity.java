@@ -30,7 +30,7 @@ public class ReservationEntity {
     private LocalDate endDate;
 
     @Column(name = "is_checked_in")
-    private boolean isCheckedIn;
+    private boolean checkedIn;
 
     public UUID getId() {
         return id;
@@ -72,12 +72,12 @@ public class ReservationEntity {
         this.endDate = endDate;
     }
 
-    public boolean isCheckedIn() {
-        return isCheckedIn;
+    public boolean checkedIn() {
+        return checkedIn;
     }
 
     public void setCheckedIn(boolean checkedIn) {
-        isCheckedIn = checkedIn;
+        this.checkedIn = checkedIn;
     }
 
 

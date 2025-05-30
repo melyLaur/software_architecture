@@ -74,7 +74,7 @@ async function onDeleteReservation() {
 }
 
 onMounted(() => {
-  // fetchReservations()
+  fetchReservations()
 })
 
 </script>
