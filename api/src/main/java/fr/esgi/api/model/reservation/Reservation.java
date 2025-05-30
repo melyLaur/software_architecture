@@ -1,6 +1,6 @@
 package fr.esgi.api.model.reservation;
 
-import fr.esgi.api.model.reservation.employee.Employee;
+import fr.esgi.api.model.employee.Employee;
 import fr.esgi.api.model.reservation.place.Place;
 
 import java.time.LocalDate;

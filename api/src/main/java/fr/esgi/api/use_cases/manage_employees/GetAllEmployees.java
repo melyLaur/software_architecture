@@ -1,7 +1,7 @@
 package fr.esgi.api.use_cases.manage_employees;
 
-import fr.esgi.api.model.reservation.employee.Employee;
-import fr.esgi.api.model.reservation.employee.EmployeeRepository;
+import fr.esgi.api.model.employee.Employee;
+import fr.esgi.api.model.employee.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,7 +1,7 @@
-package fr.esgi.api.model.reservation.employee;
+package fr.esgi.api.model.employee;
 
 import fr.esgi.api.model.reservation.Reservation;
-import fr.esgi.api.model.reservation.employee.email.Email;
+import fr.esgi.api.model.employee.email.Email;
 
 import java.util.List;
 import java.util.Objects;

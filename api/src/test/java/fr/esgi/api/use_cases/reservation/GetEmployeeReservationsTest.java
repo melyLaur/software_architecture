@@ -2,11 +2,11 @@ package fr.esgi.api.use_cases.reservation;
 
 import fr.esgi.api.dtos.responses.GetReservationResponse;
 import fr.esgi.api.model.reservation.Reservation;
-import fr.esgi.api.model.reservation.employee.Employee;
-import fr.esgi.api.model.reservation.employee.EmployeeNotFoundException;
-import fr.esgi.api.model.reservation.employee.EmployeeRepository;
-import fr.esgi.api.model.reservation.employee.EmployeeRole;
-import fr.esgi.api.model.reservation.employee.email.Email;
+import fr.esgi.api.model.employee.Employee;
+import fr.esgi.api.model.employee.EmployeeNotFoundException;
+import fr.esgi.api.model.employee.EmployeeRepository;
+import fr.esgi.api.model.employee.EmployeeRole;
+import fr.esgi.api.model.employee.email.Email;
 import fr.esgi.api.model.reservation.place.Place;
 import fr.esgi.api.model.reservation.place.PlaceIdentifier;
 import fr.esgi.api.model.reservation.place.PlaceStatus;

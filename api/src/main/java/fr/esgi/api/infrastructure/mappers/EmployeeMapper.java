@@ -2,9 +2,9 @@ package fr.esgi.api.infrastructure.mappers;
 
 import fr.esgi.api.infrastructure.jpa.entities.EmployeeEntity;
 import fr.esgi.api.model.reservation.Reservation;
-import fr.esgi.api.model.reservation.employee.Employee;
-import fr.esgi.api.model.reservation.employee.EmployeeRole;
-import fr.esgi.api.model.reservation.employee.email.Email;
+import fr.esgi.api.model.employee.Employee;
+import fr.esgi.api.model.employee.EmployeeRole;
+import fr.esgi.api.model.employee.email.Email;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
