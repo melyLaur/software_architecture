@@ -52,6 +52,11 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     }
 
     @Override
+    public List<Reservation> saveAll(List<Reservation> reservations) {
+        return reservations.stream().map(this::save).toList();
+    }
+
+    @Override
     public boolean isExistByPlaceAndDate(Place place, LocalDate bookedFor) {
         return this.reservationJpaRepository.existsByPlace_IdAndBookedFor(place.getId(), bookedFor);
     }
@@ -88,6 +93,12 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         LocalDate now = LocalDate.now();
         String name = EmployeeRole.EMPLOYEE.name();
         reservationJpaRepository.deleteAllByCheckedInFalseAndBookedForAndEmployee_Role(now, name);
+    }
+
+    @Override
+    public boolean isExistByEmployeeAndDate(Employee employee, LocalDate date) {
+        EmployeeEntity employeeEntity = employeeJpaRepository.findById(employee.getId()).orElseThrow(EmployeeNotFoundException::new);
+        return reservationJpaRepository.existsByEmployeeAndBookedFor(employeeEntity, date);
     }
 
     private List<Reservation> mappedReservationsEntitiesToDomain(EmployeeEntity entity) {

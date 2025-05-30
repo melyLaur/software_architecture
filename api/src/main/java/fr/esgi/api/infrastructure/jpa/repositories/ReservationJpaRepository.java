@@ -1,5 +1,6 @@
 package fr.esgi.api.infrastructure.jpa.repositories;
 
+import fr.esgi.api.infrastructure.jpa.entities.EmployeeEntity;
 import fr.esgi.api.infrastructure.jpa.entities.ReservationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -8,6 +9,8 @@ import java.util.UUID;
 
 public interface ReservationJpaRepository extends JpaRepository<ReservationEntity, UUID> {
     boolean existsByPlace_IdAndBookedFor(UUID placeId, LocalDate startDate);
+
+    boolean existsByEmployeeAndBookedFor(EmployeeEntity employee, LocalDate bookedFor);
 
     void deleteAllByCheckedInFalseAndBookedForAndEmployee_Role(LocalDate startDate, String role);
 }

@@ -36,10 +36,10 @@ public class ReservationController {
         return this.makeReservation.processForEmployee(id, createReservationEmployeeRequest);
     }
 
-//    @PostMapping(value = "managers/{id}/reservations")
-//    public GetReservationResponse processForManager(@PathVariable UUID id, @Valid @RequestBody CreateReservationManagerRequest createReservationManagerRequest) {
-//        return this.makeReservation.processForManager(id, createReservationManagerRequest);
-//    }
+    @PostMapping(value = "managers/{id}/reservations")
+    public List<GetReservationResponse> processForManager(@PathVariable UUID id, @Valid @RequestBody CreateReservationManagerRequest createReservationManagerRequest) {
+        return this.makeReservation.processForManager(id, createReservationManagerRequest);
+    }
 
     @DeleteMapping(value = "reservations/{id}")
     public void deleteReservation(@PathVariable UUID id) {
