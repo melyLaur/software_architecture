@@ -7,9 +7,9 @@ watchEffect(() => {
   const user = getUser()
   if (!user) return
 
-  if (user.role === 'manager') {
+  if (user.role === 'MANAGER') {
     return navigateTo('/admin/dashboard')
-  } else if (user.role === 'secretary') {
+  } else if (user.role === 'SECRETARY') {
     return navigateTo('/admin/employees')
   } else {
     return navigateTo('/reservations')

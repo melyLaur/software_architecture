@@ -7,7 +7,7 @@ import {useEmployeeApi} from "~/services/employees/employee.api";
 definePageMeta({
   layout: 'main-layout',
   middleware: ['role'],
-  roles: ['secretary']
+  roles: ['SECRETARY', 'MANAGER', 'EMPLOYEE']
 })
 
 const table = useTemplateRef('table')

@@ -1,5 +1,9 @@
-package fr.esgi.api.model.manage_employees;
+package fr.esgi.api.model.reservation.employee;
 
+import fr.esgi.api.model.reservation.Reservation;
+import fr.esgi.api.model.reservation.employee.email.Email;
+
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -7,11 +11,17 @@ public class Employee {
     private UUID id;
     private String lastName;
     private String firstName;
+    private EmployeeRole role;
+    private List<Reservation> reservations;
+    private Email email;
 
-    public Employee(UUID id, String lastName, String firstName) {
+    public Employee(UUID id, String lastName, String firstName, EmployeeRole role, List<Reservation> reservations, Email email) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
+        this.role = role;
+        this.reservations = reservations;
+        this.email = email;
     }
 
     public UUID getId() {
@@ -36,6 +46,30 @@ public class Employee {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public EmployeeRole getRole() {
+        return role;
+    }
+
+    public void setRole(EmployeeRole role) {
+        this.role = role;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    public Email getEmail() {
+        return email;
+    }
+
+    public void setEmail(Email email) {
+        this.email = email;
     }
 
     @Override
