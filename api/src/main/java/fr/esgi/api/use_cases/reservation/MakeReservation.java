@@ -7,6 +7,7 @@ import fr.esgi.api.model.DomainException;
 import fr.esgi.api.model.employee.Employee;
 import fr.esgi.api.model.employee.EmployeeRepository;
 import fr.esgi.api.model.reservation.Reservation;
+import fr.esgi.api.model.reservation.ReservationMailService;
 import fr.esgi.api.model.reservation.ReservationRepository;
 import fr.esgi.api.model.reservation.ReservationService;
 import fr.esgi.api.model.reservation.place.Place;
@@ -26,11 +27,13 @@ public class MakeReservation {
     private final ReservationService reservationService;
     private final EmployeeRepository employeeRepository;
     private final ReservationRepository reservationRepository;
+    private final ReservationMailService reservationMailService;
 
-    public MakeReservation(ReservationService reservationService, EmployeeRepository employeeRepository, ReservationRepository reservationRepository) {
+    public MakeReservation(ReservationService reservationService, EmployeeRepository employeeRepository, ReservationRepository reservationRepository, ReservationMailService reservationMailService) {
         this.reservationService = reservationService;
         this.employeeRepository = employeeRepository;
         this.reservationRepository = reservationRepository;
+        this.reservationMailService = reservationMailService;
     }
 
     public GetReservationResponse processForEmployee(UUID employeeId, CreateReservationEmployeeRequest createReservationEmployeeRequest) {
@@ -41,6 +44,8 @@ public class MakeReservation {
             Place place = this.reservationService.findAvailablePlaceForEmployee(employee, electricalPlaceNeeded, bookedFor);
             Reservation reservation = Reservation.create(employee, place, bookedFor);
             Reservation reservationSaved = this.reservationRepository.save(reservation);
+
+            this.reservationMailService.sendRecap(employee, reservationSaved, electricalPlaceNeeded);
 
             return mapToGetReservationResponse(reservationSaved);
 
@@ -65,6 +70,7 @@ public class MakeReservation {
             }
 
             List<Reservation> reservationsSaved = this.reservationRepository.saveAll(reservations);
+
             return reservationsSaved.stream().map(this::mapToGetReservationResponse).toList();
 
         } catch (DomainException e) {

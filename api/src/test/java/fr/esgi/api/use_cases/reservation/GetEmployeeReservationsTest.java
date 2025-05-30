@@ -50,7 +50,7 @@ class GetEmployeeReservationsTest {
 
         Reservation r1 = new Reservation(UUID.randomUUID(), p1, bookedFor.plusDays(1), false);
         Reservation r2 = new Reservation(UUID.randomUUID(), p2, bookedFor.plusDays(8), false);
-        Reservation r3 = new Reservation(UUID.randomUUID(), p1, bookedFor.plusDays(3), false);
+        Reservation r3 = new Reservation(UUID.randomUUID(), p1, bookedFor.plusDays(10), false);
         List<Reservation> reservations = List.of(r1, r2, r3);
 
         Employee employee = new Employee(UUID.randomUUID(), "Doe", "John", EmployeeRole.EMPLOYEE, reservations, Email.of("employee.test@gmail.com"));
