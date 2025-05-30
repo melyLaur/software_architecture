@@ -48,17 +48,17 @@ class GetEmployeeReservationsTest {
 
         LocalDate bookedFor = mockNow.plusDays(3);
 
-        Reservation r1 = new Reservation(UUID.randomUUID(), p1, bookedFor.plusDays(1), bookedFor.plusDays(1), false);
-        Reservation r2 = new Reservation(UUID.randomUUID(), p2, bookedFor.plusDays(8), bookedFor.plusDays(2), false);
-        Reservation r3 = new Reservation(UUID.randomUUID(), p1, bookedFor.plusDays(3), bookedFor.plusDays(3), false);
+        Reservation r1 = new Reservation(UUID.randomUUID(), p1, bookedFor.plusDays(1), false);
+        Reservation r2 = new Reservation(UUID.randomUUID(), p2, bookedFor.plusDays(8), false);
+        Reservation r3 = new Reservation(UUID.randomUUID(), p1, bookedFor.plusDays(3), false);
         List<Reservation> reservations = List.of(r1, r2, r3);
 
         Employee employee = new Employee(UUID.randomUUID(), "Doe", "John", EmployeeRole.EMPLOYEE, reservations, Email.of("employee.test@gmail.com"));
 
         List<GetReservationResponse> expected = List.of(
-                new GetReservationResponse(r1.getId(), r1.getStartDate(), r1.getPlace().getIdentifier().toString(), false),
-                new GetReservationResponse(r2.getId(), r2.getStartDate(), r2.getPlace().getIdentifier().toString(), true),
-                new GetReservationResponse(r3.getId(), r3.getStartDate(), r3.getPlace().getIdentifier().toString(), false)
+                new GetReservationResponse(r1.getId(), r1.getBookedFor(), r1.getPlace().getIdentifier().toString(), false),
+                new GetReservationResponse(r2.getId(), r2.getBookedFor(), r2.getPlace().getIdentifier().toString(), true),
+                new GetReservationResponse(r3.getId(), r3.getBookedFor(), r3.getPlace().getIdentifier().toString(), false)
         );
 
         when(employeeRepository.getById(employee.getId())).thenReturn(employee);

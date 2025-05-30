@@ -1,11 +1,9 @@
 package fr.esgi.api.model.reservation;
 
 import fr.esgi.api.model.employee.Employee;
-import fr.esgi.api.model.employee.EmployeeRole;
 import fr.esgi.api.model.reservation.exceptions.CannotBookException;
 import fr.esgi.api.model.reservation.exceptions.CannotBookExceptionMessage;
 import fr.esgi.api.model.reservation.exceptions.NoPlaceAvailableException;
-import fr.esgi.api.model.reservation.exceptions.UnsupportedEmployeeRoleException;
 import fr.esgi.api.model.reservation.place.Place;
 import fr.esgi.api.model.reservation.place.PlaceRepository;
 import fr.esgi.api.model.reservation.place.PlaceType;
@@ -29,38 +27,16 @@ public class ReservationService {
     }
 
     public Place findAvailablePlaceForEmployee(Employee employee, boolean electricalPlaceNeeded, LocalDate bookedFor) {
-        if (employee.getRole() == EmployeeRole.EMPLOYEE) {
-            validateEmployeeConstraints(employee, bookedFor);
-            return findPlaceForOneDay(electricalPlaceNeeded, bookedFor);
-        } else if (employee.getRole() == EmployeeRole.MANAGER) {
-            validateManagerConstraints(employee, bookedFor);
-            return findPlaceForAMonth(electricalPlaceNeeded, bookedFor);
-        }
+        validateReservationConstraints(bookedFor);
 
-        throw new UnsupportedEmployeeRoleException();
-    }
+        LocalDate now = LocalDate.now();
+        List<Reservation> reservations = employee
+                .getReservations()
+                .stream()
+                .filter(reservation -> !reservation.isCheckedIn() && !reservation.getBookedFor().isBefore(now))
+                .toList();
 
-    private void validateEmployeeConstraints(Employee employee, LocalDate bookedFor) {
-        validateReservationConstraints(employee, bookedFor);
-
-        if (!isWorkingDay(bookedFor)) {
-            throw new CannotBookException(CannotBookExceptionMessage.INVALID_WORKING_DAYS);
-        }
-
-        if (employee.getReservations().size() >= EMPLOYEE_MAXIMUM_POSSIBLE_RESERVATION_DAYS) {
-            throw new CannotBookException(CannotBookExceptionMessage.MAXIMUM_POSSIBLE_RESERVATION_DAYS_EXCEED);
-        }
-    }
-
-    private void validateManagerConstraints(Employee employee, LocalDate bookedFor) {
-        validateReservationConstraints(employee, bookedFor);
-
-        if (!employee.getReservations().isEmpty()) {
-            throw new CannotBookException(CannotBookExceptionMessage.MAXIMUM_POSSIBLE_RESERVATION_DAYS_EXCEED);
-        }
-    }
-
-    private Place findPlaceForOneDay(boolean electricalPlaceNeeded, LocalDate bookedFor) {
+        validateEmployeeConstraints(reservations, bookedFor);
         List<Place> availablePlaces = findAvailablePlaces(electricalPlaceNeeded, bookedFor);
 
         if (availablePlaces.isEmpty()) {
@@ -70,16 +46,22 @@ public class ReservationService {
         return availablePlaces.getFirst();
     }
 
-    private Place findPlaceForAMonth(boolean electricalPlaceNeeded, LocalDate bookedFor) {
+    public Place findAvailablePlaceForManager(Employee employee, boolean electricalPlaceNeeded, LocalDate bookedFor, Integer numberDays) {
+        validateReservationConstraints(bookedFor);
+        validateManagerConstraints(employee, bookedFor, numberDays);
+        return findAvailablePlaceForAMonth(electricalPlaceNeeded, bookedFor, numberDays);
+    }
+
+    private Place findAvailablePlaceForAMonth(boolean electricalPlaceNeeded, LocalDate bookedFor, Integer numberDays) {
         PlaceType placeType = electricalPlaceNeeded ? PlaceType.ELECTRICAL : PlaceType.NORMAL;
         List<Place> allPlaces = this.placeRepository.getAvailablePlaces(placeType);
 
-        for(Place place : allPlaces) {
+        for (Place place : allPlaces) {
             boolean allDaysAvailable = true;
 
-            for (int i = 0; i < MANAGER_POSSIBLE_RESERVATION_DAYS; i++) {
+            for (int i = 0; i < numberDays; i++) {
                 LocalDate currentDate = bookedFor.plusDays(i);
-                if(this.reservationRepository.isExistByPlaceAndDate(place, currentDate)) {
+                if (this.reservationRepository.isExistByPlaceAndDate(place, currentDate)) {
                     allDaysAvailable = false;
                     break;
                 }
@@ -109,13 +91,37 @@ public class ReservationService {
         return availablePlacesForGivenDate;
     }
 
-    private void validateReservationConstraints(Employee employee, LocalDate bookedFor) {
+    private void validateReservationConstraints(LocalDate bookedFor) {
         if (bookedFor.isBefore(LocalDate.now())) {
             throw new CannotBookException(CannotBookExceptionMessage.INVALID_DATE);
         }
+    }
 
-        for (Reservation reservation : employee.getReservations()) {
-            if (reservation.getStartDate().isEqual(bookedFor)) {
+    private void validateEmployeeConstraints(List<Reservation> employeeReservations, LocalDate bookedFor) {
+        if (!isWorkingDay(bookedFor)) {
+            throw new CannotBookException(CannotBookExceptionMessage.INVALID_WORKING_DAYS);
+        }
+
+        if (employeeReservations.size() == EMPLOYEE_MAXIMUM_POSSIBLE_RESERVATION_DAYS) {
+            throw new CannotBookException(CannotBookExceptionMessage.MAXIMUM_POSSIBLE_RESERVATION_DAYS_EXCEED);
+        }
+
+        for (Reservation reservation : employeeReservations) {
+            if (reservation.getBookedFor().isEqual(bookedFor)) {
+                throw new CannotBookException(CannotBookExceptionMessage.RESERVATION_ALREADY_EXITS);
+            }
+        }
+    }
+
+    private void validateManagerConstraints(Employee employee, LocalDate bookedFor, Integer numberDays) {
+        if (employee.getReservations().size() + numberDays >= MANAGER_POSSIBLE_RESERVATION_DAYS) {
+            throw new CannotBookException(CannotBookExceptionMessage.MAXIMUM_POSSIBLE_RESERVATION_DAYS_EXCEED);
+        }
+
+        for (int i = 1; i <= numberDays; i++) {
+            LocalDate date = bookedFor.plusDays(i);
+            boolean isReservationExist = this.reservationRepository.isExistByEmployeeAndDate(employee, date);
+            if (isReservationExist) {
                 throw new CannotBookException(CannotBookExceptionMessage.RESERVATION_ALREADY_EXITS);
             }
         }

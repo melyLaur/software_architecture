@@ -1,4 +1,5 @@
 import {useAuthSession} from "~/composables/auth/useAuthSession";
+import {FetchError} from "ofetch";
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 export type ApiRequestBody = Record<string, unknown> | BodyInit | null | undefined;
@@ -46,10 +47,15 @@ export class ApiClient {
             console.groupEnd();
             return response;
         } catch (error) {
-            console.group()
-            console.error('Erreur lors de la requête :', method, url);
-            console.error(error);
-            console.groupEnd()
+            if (error instanceof FetchError) {
+                console.group();
+                console.error('Erreur lors de la requête :', method, url);
+                console.error('Statut HTTP :', error.response?.status);
+                console.error('Corps de la réponse :', error.response?._data);
+                console.groupEnd();
+                throw new Error(error.response?._data?.message ?? 'Erreur inconnue');
+            }
+            console.error('Erreur inconnue :', error);
             throw error;
         }
     }

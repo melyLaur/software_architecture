@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 
 import CreateReservationModal from "~/components/modals/reservations/CreateReservationModal.vue";
+import CreateReservationManagerModal from "~/components/modals/reservations/CreateReservationManagerModal.vue";
 import {useModals} from "~/composables/modals/useModals";
 import {useReservation} from "~/composables/reservations/useReservation";
 import {useNotify} from "~/composables/useNotify";
@@ -8,6 +9,7 @@ import type {Reservation} from "~/types/reservation";
 import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
 import {useAuthSession} from "~/composables/auth/useAuthSession";
+import {TODAY_RESERVATION_DEADLINE_HOUR} from "~/components/inputs/reservation";
 
 dayjs.locale('fr');
 
@@ -26,6 +28,7 @@ const {
   reservationSlots,
   cancelReservation,
   reserveParkingSpace,
+  reserveParkingSpaceManager,
   fetchReservations,
 } = useReservation();
 const image = new URL('~/assets/images/parking.jpeg', import.meta.url).href;
@@ -53,7 +56,27 @@ async function onCreateReservation(form: { date: string, isElectric: boolean }) 
   });
 
   if (isError.value) {
-    showError('Une erreur est survenue lors de la réservation.');
+    showError(`Une erreur est survenue lors de la réservation. (${isError.value})`);
+    return;
+  }
+  showSuccess('Réservation créée avec succès.');
+  openCreateReservationModal.value = false;
+}
+
+async function onCreateReservationManager(form: { date: string, daysNumber: number, isElectric: boolean }) {
+  if (!dayjs(form.date).isValid()) {
+    showError('La date est invalide.');
+    return;
+  }
+
+  await reserveParkingSpaceManager({
+    date: form.date,
+    daysNumber: form.daysNumber,
+    isElectric: form.isElectric
+  });
+
+  if (isError.value) {
+    showError(`Une erreur est survenue lors de la réservation. (${isError.value})`);
     return;
   }
   showSuccess('Réservation créée avec succès.');
@@ -66,11 +89,16 @@ async function onDeleteReservation() {
   if (result) {
     try {
       await cancelReservation(currentReservation.value!.reservationId);
+      showSuccess('Réservation annulée avec succès.');
     } catch (e) {
       console.error(e);
-      showError('Une erreur est survenue lors de l\'annulation de la réservation.');
+      showError(`Une erreur est survenue lors de l'annulation de la réservation (${isError.value}).`);
     }
   }
+}
+
+const isSlotToday = (slot: Reservation) => {
+  return dayjs(slot.date).isSame(dayjs(), 'day') && dayjs().hour() < TODAY_RESERVATION_DEADLINE_HOUR;
 }
 
 onMounted(() => {
@@ -90,7 +118,7 @@ onMounted(() => {
       <div v-if="currentUser?.role === 'MANAGER'" class="rounded">
         <!--  Manager        -->
         <div
-            v-for="(slot, index) in reservationSlots.slice(0, 1)"
+            v-for="(slot, index) in Array.from({length: 1}, (_, index) => (reservationSlots[index] || null)).slice(0, 1)"
             :key="index"
             class="relative rounded-lg flex flex-col px-4 py-3 text-white font-medium overflow-hidden"
         >
@@ -117,6 +145,12 @@ onMounted(() => {
                     color="neutral" icon="i-lucide-plus" variant="outline"
                     @click="openCreateReservationModal = true"/>
               </div>
+              <div v-else-if="slot && isSlotToday(slot)">
+                <UButton
+                    color="warning" icon="i-lucide-check" variant="solid"
+                    @click="$router.push(`/reservations/check-in?reservationId=${slot.reservationId}`)"
+                />
+              </div>
               <div v-else class="absolute top-0 right-0">
                 <UDropdownMenu
                     :content="{ align: 'start' }"
@@ -135,7 +169,7 @@ onMounted(() => {
               <div class="text-xl font-medium">
                 <span>{{ dayjs(slot.date).format('ddd DD MMM YY') }}</span>
                 <span> au </span>
-                <span>{{ dayjs(slot.date).add(1, 'month').format('ddd DD MMM YY') }}</span>
+                <span>{{ dayjs(slot.date).add(reservationSlots.length - 1, 'day').format('ddd DD MMM YY') }}</span>
               </div>
             </div>
           </div>
@@ -146,7 +180,7 @@ onMounted(() => {
         <!--  Employee        -->
         <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 w-full">
           <div
-              v-for="(slot, index) in reservationSlots"
+              v-for="(slot, index) in Array.from({length: 5}, (_, index) => (reservationSlots[index] || null))"
               :key="index"
               class="relative rounded-lg flex flex-col px-4 py-3 text-white font-medium overflow-hidden"
           >
@@ -174,6 +208,12 @@ onMounted(() => {
                   <UButton
                       color="neutral" icon="i-lucide-plus" variant="outline"
                       @click="openCreateReservationModal = true"/>
+                </div>
+                <div v-else-if="slot && isSlotToday(slot)" class="absolute top-0 right-0">
+                  <UButton
+                      color="warning" icon="i-lucide-check" variant="solid"
+                      @click="$router.push(`/reservations/check-in?reservationId=${slot.reservationId}`)"
+                  />
                 </div>
                 <div v-else class="absolute top-0 right-0">
                   <UDropdownMenu
@@ -211,8 +251,14 @@ onMounted(() => {
       </div>
 
       <CreateReservationModal
+          v-if="currentUser?.role === 'EMPLOYEE'"
           v-model:open="openCreateReservationModal"
           @on-submit="onCreateReservation($event)"
+      />
+      <CreateReservationManagerModal
+          v-if="currentUser?.role === 'MANAGER'"
+          v-model:open="openCreateReservationModal"
+          @on-submit="onCreateReservationManager($event)"
       />
     </div>
   </div>
