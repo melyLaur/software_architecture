@@ -3,7 +3,6 @@ package fr.esgi.api.presentation;
 import fr.esgi.api.dtos.requests.AddEmployeeRequest;
 import fr.esgi.api.dtos.responses.AddEmployeeResponse;
 import fr.esgi.api.dtos.responses.DeleteEmployeeResponse;
-import fr.esgi.api.dtos.responses.GetEmployeeByIdResponse;
 import fr.esgi.api.dtos.responses.GetEmployeeResponse;
 import fr.esgi.api.use_cases.manage_employees.AddEmployee;
 import fr.esgi.api.use_cases.manage_employees.DeleteEmployee;
@@ -47,7 +46,7 @@ public class ManageUserController {
     }
 
     @GetMapping("/{employeeId}")
-    public GetEmployeeByIdResponse getEmployeeById(@PathVariable UUID employeeId) {
+    public GetEmployeeResponse getEmployeeById(@PathVariable UUID employeeId) {
         return this.getEmployeeById.execute(employeeId);
     }
 }

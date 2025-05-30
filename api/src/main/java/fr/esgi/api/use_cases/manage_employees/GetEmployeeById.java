@@ -1,6 +1,6 @@
 package fr.esgi.api.use_cases.manage_employees;
 
-import fr.esgi.api.dtos.responses.GetEmployeeByIdResponse;
+import fr.esgi.api.dtos.responses.GetEmployeeResponse;
 import fr.esgi.api.model.employee.Employee;
 import fr.esgi.api.model.employee.EmployeeNotFoundException;
 import fr.esgi.api.model.employee.EmployeeRepository;
@@ -18,10 +18,16 @@ public class GetEmployeeById {
         this.employeeRepository = employeeRepository;
     }
 
-    public GetEmployeeByIdResponse execute(UUID employeeId) {
+    public GetEmployeeResponse execute(UUID employeeId) {
         try {
             Employee employee = this.employeeRepository.getById(employeeId);
-            return new GetEmployeeByIdResponse(employee.getId());
+            return new GetEmployeeResponse(
+                    employee.getId(),
+                    employee.getFirstName(),
+                    employee.getLastName(),
+                    employee.getEmail().getValue(),
+                    employee.getRole()
+            );
         } catch (EmployeeNotFoundException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getMessage());
         }
