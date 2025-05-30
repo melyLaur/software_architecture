@@ -34,7 +34,7 @@ public class ReservationMapper {
         ReservationEntity entity = new ReservationEntity();
         entity.setEmployee(employeeEntity);
         entity.setPlace(placeEntity);
-        entity.setBookedFor(entity.getBookedFor());
+        entity.setBookedFor(reservation.getBookedFor());
         entity.setCheckedIn(reservation.isCheckedIn());
         return entity;
     }
