@@ -60,7 +60,7 @@ public class MakeReservation {
             Place place = this.reservationService.findAvailablePlaceForManager(employee, electricalPlaceNeeded, bookedFor, numberDays);
 
             List<Reservation> reservations = new ArrayList<>();
-            for (int i = 1; i <= numberDays; i++) {
+            for (int i = 0; i < numberDays; i++) {
                 reservations.add(Reservation.create(employee, place, bookedFor.plusDays(i)));
             }
 
