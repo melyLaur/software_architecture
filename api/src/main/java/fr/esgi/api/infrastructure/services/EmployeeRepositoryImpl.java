@@ -13,7 +13,9 @@ import fr.esgi.api.model.reservation.employee.EmployeeRepository;
 import fr.esgi.api.model.reservation.place.Place;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -47,8 +49,30 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
         return this.employeeMapper.toDomain(entity, reservationList);
     }
 
+    @Override
+    public Employee save(Employee employee) {
+        EmployeeEntity entity = this.employeeMapper.toEntity(employee);
+        entity = this.employeeJpaRepository.save(entity);
+        return this.employeeMapper.toDomain(entity, mappedReservationsEntitiesToDomain(entity));
+    }
+
+    @Override
+    public void delete(Employee employee) {
+        EmployeeEntity entity = this.employeeJpaRepository.findById(employee.getId()).orElseThrow(EmployeeNotFoundException::new);
+        this.employeeJpaRepository.delete(entity);
+    }
+
+    @Override
+    public Optional<Employee> findByEmail(String email) {
+        return employeeJpaRepository.findByEmail(email).map(entity -> employeeMapper.toDomain(entity, mappedReservationsEntitiesToDomain(entity)));
+    }
+
+
     private List<Reservation> mappedReservationsEntitiesToDomain(EmployeeEntity entity) {
         List<ReservationEntity> reservations = entity.getReservations();
+        if (reservations == null) {
+            return Collections.emptyList();
+        }
         return reservations.stream().map(reservation -> {
             Place place = placeMapper.toDomain(reservation.getPlace());
             return reservationMapper.toDomain(reservation, place);

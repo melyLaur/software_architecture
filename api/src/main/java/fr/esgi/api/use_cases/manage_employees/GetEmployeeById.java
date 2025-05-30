@@ -1,0 +1,27 @@
+package fr.esgi.api.use_cases.manage_employees;
+
+import fr.esgi.api.model.reservation.employee.Employee;
+import fr.esgi.api.model.reservation.employee.EmployeeNotFoundException;
+import fr.esgi.api.model.reservation.employee.EmployeeRepository;
+import fr.esgi.api.presentation.exceptions.ApiException;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+public class GetEmployeeById {
+    private final EmployeeRepository employeeRepository;
+
+    public GetEmployeeById(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
+
+    public Employee execute(UUID employeeId) {
+        try {
+            return this.employeeRepository.getById(employeeId);
+        } catch (EmployeeNotFoundException e) {
+            throw new ApiException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+}

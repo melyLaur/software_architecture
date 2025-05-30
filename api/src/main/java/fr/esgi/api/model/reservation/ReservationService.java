@@ -12,10 +12,8 @@ import fr.esgi.api.model.reservation.place.PlaceType;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class ReservationService {
