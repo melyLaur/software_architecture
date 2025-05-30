@@ -1,29 +1,21 @@
 import type {Reservation} from "~/types/reservation";
 import {useReservationApi} from "~/services/reservations/reservation.api";
 
-export const MAX_RESERVATION = 5
-
 export const useReservation = () => {
     const isLoading = ref(false)
     const isError = ref(false)
-    const reservationSlots = ref<Reservation[] | null[]>(Array.from({length: MAX_RESERVATION}, () => null))
+    const reservationSlots = ref<Reservation[]>([])
 
     //------- utils functions
     const setReservationSlots = (slots: Reservation[]) => {
-        if (slots.length > MAX_RESERVATION) {
-            console.warn(`Received more slots than expected: ${slots.length}, expected: ${MAX_RESERVATION}`);
-            slots = slots.slice(0, MAX_RESERVATION);
-        }
-        reservationSlots.value = Array.from({length: MAX_RESERVATION}, (_, index) => {
-            return slots[index] || null;
-        });
+        reservationSlots.value = slots;
     }
     const addReservationSlot = (slot: Reservation) => {
         const index = reservationSlots.value.findIndex(s => s === null);
         if (index !== -1) {
             reservationSlots.value[index] = slot;
         } else {
-            console.warn("No empty slot available to add the reservation.");
+            reservationSlots.value[0] = slot;
         }
     }
     const removeReservationSlot = (reservationId: string) => {
@@ -35,15 +27,15 @@ export const useReservation = () => {
 
 
     //------- domain functions
-    const getReservationSlotBy = async () => {
-        const { getReservationSlotBy } = useReservationApi();
+    const getReservationSlotById = async (reservationId: string) => {
+        const { getReservationSlotById } = useReservationApi();
         try {
             isLoading.value = true;
             isError.value = false;
-            return await getReservationSlotBy();
+            return await getReservationSlotById(reservationId);
         } catch(e) {
             console.error(e);
-            isError.value = true;
+            isError.value = e?.message || 'Erreur inconnue'
         } finally {
             isLoading.value = false;
         }
@@ -58,7 +50,7 @@ export const useReservation = () => {
             setReservationSlots(reservations);
         } catch(e) {
             console.error(e);
-            isError.value = true;
+            isError.value = e?.message || 'Erreur inconnue'
         } finally {
             isLoading.value = false;
         }
@@ -79,7 +71,30 @@ export const useReservation = () => {
             }, 750);
         } catch(e) {
             console.error(e);
-            isError.value = true;
+            isError.value = e?.message || 'Erreur inconnue'
+            isLoading.value = false
+        } finally {
+
+        }
+    }
+
+    const reserveParkingSpaceManager = async (form: { date: string, daysNumber: number, isElectric: boolean }) => {
+        const { reserveParkingSpaceManager } = useReservationApi();
+        try {
+            isLoading.value = true;
+            isError.value = false;
+            const reservations = await reserveParkingSpaceManager({
+                bookedFor: form.date,
+                daysNumber: form.daysNumber,
+                isElectric: form.isElectric
+            })
+            setTimeout(() => {
+                setReservationSlots(reservations)
+                isLoading.value = false
+            }, 750);
+        } catch(e) {
+            console.error(e);
+            isError.value = e?.message || 'Erreur inconnue'
             isLoading.value = false
         } finally {
 
@@ -95,24 +110,24 @@ export const useReservation = () => {
             removeReservationSlot(reservationId);
         } catch(e) {
             console.error(e);
-            isError.value = true;
+            isError.value = e?.message || 'Erreur inconnue'
         } finally {
             isLoading.value = false;
         }
     }
 
-    const checkInReservation = async (token: string) => {
+    const checkInReservation = async (reservationId: string) => {
         const { checkInReservation } = useReservationApi()
         try {
             isLoading.value = true;
             isError.value = false;
-            await checkInReservation({ token });
+            await checkInReservation({ reservationId });
             setTimeout(() => {
                 isLoading.value = false;
             }, 750);
         } catch (e) {
             console.error(e);
-            isError.value = true;
+            isError.value = e?.message || 'Erreur inconnue'
             isLoading.value = false
         }
     }
@@ -123,8 +138,9 @@ export const useReservation = () => {
         reservationSlots,
         cancelReservation,
         reserveParkingSpace,
+        reserveParkingSpaceManager,
         fetchReservations,
         checkInReservation,
-        getReservationSlotBy,
+        getReservationSlotById,
     }
 }
