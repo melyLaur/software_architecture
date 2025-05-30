@@ -1,7 +1,7 @@
 package fr.esgi.api.model.reservation;
 
-import fr.esgi.api.model.reservation.employee.Employee;
-import fr.esgi.api.model.reservation.employee.EmployeeRole;
+import fr.esgi.api.model.employee.Employee;
+import fr.esgi.api.model.employee.EmployeeRole;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;

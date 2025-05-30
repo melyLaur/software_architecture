@@ -1,4 +1,4 @@
-package fr.esgi.api.model.reservation.employee.email;
+package fr.esgi.api.model.employee.email;
 
 import fr.esgi.api.model.DomainException;
 

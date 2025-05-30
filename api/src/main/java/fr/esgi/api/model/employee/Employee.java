@@ -1,8 +1,10 @@
-package fr.esgi.api.model.reservation.employee;
+package fr.esgi.api.model.employee;
 
+import fr.esgi.api.dtos.requests.AddEmployeeRequest;
 import fr.esgi.api.model.reservation.Reservation;
-import fr.esgi.api.model.reservation.employee.email.Email;
+import fr.esgi.api.model.employee.email.Email;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -22,6 +24,24 @@ public class Employee {
         this.role = role;
         this.reservations = reservations;
         this.email = email;
+    }
+
+    private Employee(String lastName, String firstName, EmployeeRole role, List<Reservation> reservations, Email email) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.role = role;
+        this.reservations = reservations;
+        this.email = email;
+    }
+
+    public static Employee create(AddEmployeeRequest addEmployeeRequest) {
+        return new Employee(
+                addEmployeeRequest.lastName(),
+                addEmployeeRequest.firstName(),
+                addEmployeeRequest.role(),
+                Collections.emptyList(),
+                Email.of(addEmployeeRequest.email())
+        );
     }
 
     public UUID getId() {
