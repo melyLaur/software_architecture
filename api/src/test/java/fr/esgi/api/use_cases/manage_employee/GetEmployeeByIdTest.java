@@ -1,6 +1,6 @@
 package fr.esgi.api.use_cases.manage_employee;
 
-import fr.esgi.api.dtos.responses.GetEmployeeByIdResponse;
+import fr.esgi.api.dtos.responses.GetEmployeeResponse;
 import fr.esgi.api.model.employee.Employee;
 import fr.esgi.api.model.employee.EmployeeNotFoundException;
 import fr.esgi.api.model.employee.EmployeeRepository;
@@ -34,7 +34,7 @@ class GetEmployeeByIdTest {
         UUID employeeId = UUID.randomUUID();
         Employee existingEmployee = new Employee(employeeId, "Smith", "Anna", EmployeeRole.SECRETARY, Collections.emptyList(), Email.of("anna@esgi.fr"));
         when(employeeRepository.getById(employeeId)).thenReturn(existingEmployee);
-        GetEmployeeByIdResponse response = getEmployeeById.execute(employeeId);
+        GetEmployeeResponse response = getEmployeeById.execute(employeeId);
 
         assertNotNull(response);
         assertEquals(employeeId, response.employeeId());
