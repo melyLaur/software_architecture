@@ -39,13 +39,13 @@ public class ManageUserController {
         return this.addEmployee.execute(addEmployeeRequest);
     }
 
-    @DeleteMapping("/employees")
-    public DeleteEmployeeResponse deleteEmployee(@RequestParam UUID employeeIdToDelete) {
-        return this.deleteEmployee.execute(employeeIdToDelete);
+    @DeleteMapping("/employees/{id}")
+    public DeleteEmployeeResponse deleteEmployee(@PathVariable UUID id) {
+        return this.deleteEmployee.execute(id);
     }
 
-    @GetMapping("/employees/{employeeId}")
-    public GetEmployeeResponse getEmployeeById(@PathVariable UUID employeeId) {
-        return this.getEmployeeById.execute(employeeId);
+    @GetMapping("/employees/{id}")
+    public GetEmployeeResponse getEmployeeById(@PathVariable UUID id) {
+        return this.getEmployeeById.execute(id);
     }
 }
