@@ -1,11 +1,13 @@
 package fr.esgi.api.dtos.requests;
 
-import jakarta.validation.constraints.NotBlank;
+import fr.esgi.api.model.employee.EmployeeRole;
+import jakarta.validation.constraints.*;
 
 public record AddEmployeeRequest(
         @NotBlank String firstName,
         @NotBlank String lastName,
-        @NotBlank String email
+        @NotBlank String email,
+        @NotNull EmployeeRole role
 ) {
     public AddEmployeeRequest {
         firstName = firstName.trim();

@@ -1,4 +1,4 @@
-package fr.esgi.api.model.reservation.employee;
+package fr.esgi.api.model.employee;
 
 import java.util.List;
 import java.util.Optional;

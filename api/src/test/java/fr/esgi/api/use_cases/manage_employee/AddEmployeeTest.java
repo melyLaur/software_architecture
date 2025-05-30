@@ -2,22 +2,21 @@ package fr.esgi.api.use_cases.manage_employee;
 
 import fr.esgi.api.dtos.requests.AddEmployeeRequest;
 import fr.esgi.api.dtos.responses.AddEmployeeResponse;
-import fr.esgi.api.model.reservation.employee.Employee;
-import fr.esgi.api.model.reservation.employee.EmployeeRepository;
-import fr.esgi.api.model.reservation.employee.EmployeeRole;
-import fr.esgi.api.model.reservation.employee.EmployeeService;
-import fr.esgi.api.model.reservation.employee.email.Email;
-import fr.esgi.api.model.reservation.exceptions.UnauthorizedEmployeeCreationException;
+import fr.esgi.api.model.DomainException;
+import fr.esgi.api.model.employee.Employee;
+import fr.esgi.api.model.employee.EmployeeRepository;
+import fr.esgi.api.model.employee.EmployeeRole;
 import fr.esgi.api.presentation.exceptions.ApiException;
 import fr.esgi.api.use_cases.manage_employees.AddEmployee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,79 +28,92 @@ class AddEmployeeTest {
     @Mock
     private EmployeeRepository employeeRepository;
 
-    @Mock
-    private EmployeeService employeeService;
-
     @InjectMocks
     private AddEmployee addEmployee;
 
-    private UUID secretaryId;
-    private Employee secretary;
+    private AddEmployeeRequest validRequest;
 
     @BeforeEach
-    void setup() {
-        secretaryId = UUID.randomUUID();
-        secretary = new Employee(
-                secretaryId,
-                "Smith",
-                "Anna",
-                EmployeeRole.SECRETARY,
-                Collections.emptyList(),
-                Email.of("anna.secretary@esgi.fr")
+    void setUp() {
+        validRequest = new AddEmployeeRequest(
+                " John ",
+                " Doe",
+                " john.doe@esgi.fr ",
+                EmployeeRole.EMPLOYEE
         );
     }
 
     @Test
-    void should_create_employee_when_creator_is_secretary() {
-        AddEmployeeRequest request = new AddEmployeeRequest("John", "Doe", "john.doe@esgi.fr");
-        Employee toCreate  = Employee.create(request);
-        Employee persisted = new Employee(
+    void should_throw_conflict_when_email_already_exists() {
+        when(employeeRepository.findByEmail("john.doe@esgi.fr")).thenReturn(Optional.of(mock(Employee.class)));
+
+        ApiException exception = assertThrows(ApiException.class, () -> addEmployee.execute(validRequest));
+        assertEquals(HttpStatus.CONFLICT, exception.getStatus());
+        assertEquals("Un employé existe déjà avec cet email.", exception.getMessage());
+
+        verify(employeeRepository, never()).save(any());
+    }
+
+    @Test
+    void should_create_and_return_employee_on_success() {
+        when(employeeRepository.findByEmail("john.doe@esgi.fr"))
+                .thenReturn(Optional.empty());
+
+        Employee toSave = Employee.create(validRequest);
+        Employee savedEmployee = new Employee(
                 UUID.randomUUID(),
-                toCreate.getLastName(),
-                toCreate.getFirstName(),
-                toCreate.getRole(),
+                toSave.getLastName(),
+                toSave.getFirstName(),
+                toSave.getRole(),
                 Collections.emptyList(),
-                toCreate.getEmail()
+                toSave.getEmail()
         );
+        when(employeeRepository.save(any())).thenReturn(savedEmployee);
 
-        when(employeeRepository.getById(secretaryId)).thenReturn(secretary);
-        when(employeeService.createEmployee(secretary, request)).thenReturn(toCreate);
-        when(employeeRepository.save(toCreate)).thenReturn(persisted);
-
-        AddEmployeeResponse response = addEmployee.execute(secretaryId, request);
+        AddEmployeeResponse response = addEmployee.execute(validRequest);
 
         assertNotNull(response);
-        assertEquals(persisted.getId(),      response.employeeId());
-        assertEquals("John",                 response.firstName());
-        assertEquals("Doe",                  response.lastName());
-        assertEquals("john.doe@esgi.fr",     response.email());
+        assertEquals(savedEmployee.getId(), response.employeeId());
+        assertEquals("John", response.firstName());
+        assertEquals("Doe", response.lastName());
+        assertEquals("john.doe@esgi.fr", response.email());
+        assertEquals(EmployeeRole.EMPLOYEE, response.role());
 
-        verify(employeeRepository).getById(secretaryId);
-        verify(employeeService).createEmployee(secretary, request);
-        verify(employeeRepository).save(toCreate);
+        verify(employeeRepository).save(argThat(employee -> employee.getFirstName().equals("John") && employee.getLastName().equals("Doe") && employee.getEmail().getValue().equals("john.doe@esgi.fr")));
     }
 
     @Test
-    void should_throw_when_creator_is_not_secretary() {
-        UUID nonSecretaryId = UUID.randomUUID();
-        Employee employee = new Employee(
-                nonSecretaryId,
-                "Normal",
-                "User",
-                EmployeeRole.EMPLOYEE,
-                Collections.emptyList(),
-                Email.of("normal.user@esgi.fr")
+    void should_trim_input_fields_before_saving() {
+        AddEmployeeRequest requestWithSpaces = new AddEmployeeRequest(
+                "  John  ",
+                "  Doe ",
+                "  john.doe@esgi.fr  ",
+                EmployeeRole.MANAGER
         );
-        AddEmployeeRequest request = new AddEmployeeRequest("John", "Doe", "john.doe@esgi.fr");
+        when(employeeRepository.findByEmail("john.doe@esgi.fr")).thenReturn(Optional.empty());
 
-        when(employeeRepository.getById(nonSecretaryId)).thenReturn(employee);
-        when(employeeService.createEmployee(employee, request))
-                .thenThrow(new UnauthorizedEmployeeCreationException());
+        Employee toSave = Employee.create(requestWithSpaces);
+        Employee savedEmployee = new Employee(UUID.randomUUID(), toSave.getLastName(), toSave.getFirstName(), toSave.getRole(), Collections.emptyList(), toSave.getEmail());
+        when(employeeRepository.save(any())).thenReturn(savedEmployee);
 
-        assertThrows(ApiException.class, () -> addEmployee.execute(nonSecretaryId, request));
+        AddEmployeeResponse response = addEmployee.execute(requestWithSpaces);
 
-        verify(employeeRepository).getById(nonSecretaryId);
-        verify(employeeService).createEmployee(employee, request);
-        verify(employeeRepository, never()).save(any());
+        assertEquals("John", response.firstName());
+        assertEquals("Doe", response.lastName());
+        assertEquals("john.doe@esgi.fr", response.email());
+        assertEquals(EmployeeRole.MANAGER, response.role());
+    }
+
+    @Test
+    void should_throw_bad_request_when_domain_exception_occurs() {
+        when(employeeRepository.findByEmail("john.doe@esgi.fr")).thenReturn(Optional.empty());
+        when(employeeRepository.save(any())).thenThrow(new DomainException("donnée invalide"));
+
+        ApiException ex = assertThrows(ApiException.class, () -> addEmployee.execute(validRequest));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
+        assertEquals("donnée invalide", ex.getMessage());
+
+        verify(employeeRepository).findByEmail("john.doe@esgi.fr");
+        verify(employeeRepository).save(any());
     }
 }

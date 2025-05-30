@@ -3,35 +3,40 @@ package fr.esgi.api.use_cases.manage_employees;
 import fr.esgi.api.dtos.requests.AddEmployeeRequest;
 import fr.esgi.api.dtos.responses.AddEmployeeResponse;
 import fr.esgi.api.model.DomainException;
-import fr.esgi.api.model.reservation.employee.*;
+import fr.esgi.api.model.employee.Employee;
+import fr.esgi.api.model.employee.EmployeeAlreadyExist;
+import fr.esgi.api.model.employee.EmployeeRepository;
 import fr.esgi.api.presentation.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class AddEmployee {
     private final EmployeeRepository employeeRepository;
-    private final EmployeeService employeeDomainService;
 
-    public AddEmployee(EmployeeRepository employeeRepo, EmployeeService employeeDomainService) {
-        this.employeeRepository = employeeRepo;
-        this.employeeDomainService = employeeDomainService;
+    public AddEmployee(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
-    public AddEmployeeResponse execute(UUID creatorId, AddEmployeeRequest dto) {
+
+    public AddEmployeeResponse execute(AddEmployeeRequest request) {
         try {
-            Employee creator = this.employeeRepository.getById(creatorId);
-            Employee newEmployee = this.employeeDomainService.createEmployee(creator, dto);
-            Employee savedEmployee = this.employeeRepository.save(newEmployee);
+            if (employeeRepository.findByEmail(request.email().trim()).isPresent()) {
+                throw new EmployeeAlreadyExist();
+            }
+
+            Employee toCreate = Employee.create(request);
+            Employee saved = employeeRepository.save(toCreate);
 
             return new AddEmployeeResponse(
-                    savedEmployee.getId(),
-                    savedEmployee.getFirstName(),
-                    savedEmployee.getLastName(),
-                    savedEmployee.getEmail().getValue()
+                    saved.getId(),
+                    saved.getFirstName(),
+                    saved.getLastName(),
+                    saved.getEmail().getValue(),
+                    saved.getRole()
             );
+        } catch (EmployeeAlreadyExist e) {
+            throw new ApiException(HttpStatus.CONFLICT, e.getMessage());
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

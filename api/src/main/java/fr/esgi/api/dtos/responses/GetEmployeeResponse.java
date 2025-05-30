@@ -4,11 +4,10 @@ import fr.esgi.api.model.employee.EmployeeRole;
 
 import java.util.UUID;
 
-public record AddEmployeeResponse(
+public record GetEmployeeResponse(
         UUID employeeId,
         String firstName,
         String lastName,
         String email,
         EmployeeRole role
-) {
-}
+) {}

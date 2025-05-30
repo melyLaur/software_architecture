@@ -1,7 +1,7 @@
 package fr.esgi.api.model.reservation;
 
-import fr.esgi.api.model.reservation.employee.Employee;
-import fr.esgi.api.model.reservation.employee.EmployeeRole;
+import fr.esgi.api.model.employee.Employee;
+import fr.esgi.api.model.employee.EmployeeRole;
 import fr.esgi.api.model.reservation.exceptions.CannotBookException;
 import fr.esgi.api.model.reservation.exceptions.CannotBookExceptionMessage;
 import fr.esgi.api.model.reservation.exceptions.NoPlaceAvailableException;

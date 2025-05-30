@@ -1,8 +1,8 @@
-package fr.esgi.api.model.reservation.employee;
+package fr.esgi.api.model.employee;
 
 import fr.esgi.api.dtos.requests.AddEmployeeRequest;
 import fr.esgi.api.model.reservation.Reservation;
-import fr.esgi.api.model.reservation.employee.email.Email;
+import fr.esgi.api.model.employee.email.Email;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +38,7 @@ public class Employee {
         return new Employee(
                 addEmployeeRequest.lastName(),
                 addEmployeeRequest.firstName(),
-                EmployeeRole.EMPLOYEE,
+                addEmployeeRequest.role(),
                 Collections.emptyList(),
                 Email.of(addEmployeeRequest.email())
         );

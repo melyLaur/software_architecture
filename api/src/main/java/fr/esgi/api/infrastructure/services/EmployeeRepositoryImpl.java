@@ -7,9 +7,9 @@ import fr.esgi.api.infrastructure.mappers.EmployeeMapper;
 import fr.esgi.api.infrastructure.mappers.PlaceMapper;
 import fr.esgi.api.infrastructure.mappers.ReservationMapper;
 import fr.esgi.api.model.reservation.Reservation;
-import fr.esgi.api.model.reservation.employee.Employee;
-import fr.esgi.api.model.reservation.employee.EmployeeNotFoundException;
-import fr.esgi.api.model.reservation.employee.EmployeeRepository;
+import fr.esgi.api.model.employee.Employee;
+import fr.esgi.api.model.employee.EmployeeNotFoundException;
+import fr.esgi.api.model.employee.EmployeeRepository;
 import fr.esgi.api.model.reservation.place.Place;
 import org.springframework.stereotype.Service;
 

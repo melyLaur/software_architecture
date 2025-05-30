@@ -4,7 +4,7 @@ import fr.esgi.api.infrastructure.jpa.entities.EmployeeEntity;
 import fr.esgi.api.infrastructure.jpa.entities.PlaceEntity;
 import fr.esgi.api.infrastructure.jpa.entities.ReservationEntity;
 import fr.esgi.api.model.reservation.Reservation;
-import fr.esgi.api.model.reservation.employee.Employee;
+import fr.esgi.api.model.employee.Employee;
 import fr.esgi.api.model.reservation.place.Place;
 import org.springframework.stereotype.Service;
 

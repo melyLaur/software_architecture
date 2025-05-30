@@ -1,17 +1,18 @@
 package fr.esgi.api.use_cases.manage_employee;
 
-import fr.esgi.api.model.reservation.employee.Employee;
-import fr.esgi.api.model.reservation.employee.EmployeeNotFoundException;
-import fr.esgi.api.model.reservation.employee.EmployeeRepository;
-import fr.esgi.api.model.reservation.employee.EmployeeRole;
-import fr.esgi.api.model.reservation.employee.email.Email;
+import fr.esgi.api.dtos.responses.GetEmployeeByIdResponse;
+import fr.esgi.api.model.employee.Employee;
+import fr.esgi.api.model.employee.EmployeeNotFoundException;
+import fr.esgi.api.model.employee.EmployeeRepository;
+import fr.esgi.api.model.employee.EmployeeRole;
+import fr.esgi.api.model.employee.email.Email;
 import fr.esgi.api.presentation.exceptions.ApiException;
 import fr.esgi.api.use_cases.manage_employees.GetEmployeeById;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -29,25 +30,24 @@ class GetEmployeeByIdTest {
     private GetEmployeeById getEmployeeById;
 
     @Test
-    void should_return_employee_when_exists() {
+    void should_return_response_with_employee_id_when_employee_exists() {
         UUID employeeId = UUID.randomUUID();
-        Employee employee = new Employee(employeeId, "Smith", "Anna", EmployeeRole.SECRETARY, Collections.emptyList(), Email.of("anna@esgi.fr"));
+        Employee existingEmployee = new Employee(employeeId, "Smith", "Anna", EmployeeRole.SECRETARY, Collections.emptyList(), Email.of("anna@esgi.fr"));
+        when(employeeRepository.getById(employeeId)).thenReturn(existingEmployee);
+        GetEmployeeByIdResponse response = getEmployeeById.execute(employeeId);
 
-        when(employeeRepository.getById(employeeId)).thenReturn(employee);
-
-        Employee result = getEmployeeById.execute(employeeId);
-
-        assertNotNull(result);
-        assertEquals("Smith", result.getLastName());
+        assertNotNull(response);
+        assertEquals(employeeId, response.employeeId());
         verify(employeeRepository).getById(employeeId);
     }
 
     @Test
-    void should_throw_when_employee_not_found() {
-        UUID employeeId = UUID.randomUUID();
-        when(employeeRepository.getById(employeeId)).thenThrow(new EmployeeNotFoundException());
+    void should_throw_api_exception_not_found_when_employee_does_not_exist() {
+        UUID missingEmployeeId = UUID.randomUUID();
+        when(employeeRepository.getById(missingEmployeeId)).thenThrow(new EmployeeNotFoundException());
 
-        assertThrows(ApiException.class, () -> getEmployeeById.execute(employeeId));
-        verify(employeeRepository).getById(employeeId);
+        ApiException exception = assertThrows(ApiException.class, () -> getEmployeeById.execute(missingEmployeeId));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        verify(employeeRepository).getById(missingEmployeeId);
     }
 }

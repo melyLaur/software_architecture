@@ -3,7 +3,8 @@ package fr.esgi.api.presentation;
 import fr.esgi.api.dtos.requests.AddEmployeeRequest;
 import fr.esgi.api.dtos.responses.AddEmployeeResponse;
 import fr.esgi.api.dtos.responses.DeleteEmployeeResponse;
-import fr.esgi.api.model.reservation.employee.Employee;
+import fr.esgi.api.dtos.responses.GetEmployeeByIdResponse;
+import fr.esgi.api.dtos.responses.GetEmployeeResponse;
 import fr.esgi.api.use_cases.manage_employees.AddEmployee;
 import fr.esgi.api.use_cases.manage_employees.DeleteEmployee;
 import fr.esgi.api.use_cases.manage_employees.GetAllEmployees;
@@ -31,23 +32,22 @@ public class ManageUserController {
     }
 
     @GetMapping
-    public List<Employee> getAllEmployees() {
+    public List<GetEmployeeResponse> getAllEmployees() {
         return this.getAllEmployees.getAll();
     }
 
-    @PostMapping("/{creatorId}/add-employee")
-    public AddEmployeeResponse createEmployee(@PathVariable UUID creatorId, @Valid @RequestBody AddEmployeeRequest addEmployeeRequest) {
-        return this.addEmployee.execute(creatorId, addEmployeeRequest);
+    @PostMapping("/add-employee")
+    public AddEmployeeResponse createEmployee(@Valid @RequestBody AddEmployeeRequest addEmployeeRequest) {
+        return this.addEmployee.execute(addEmployeeRequest);
     }
 
-
     @DeleteMapping("/delete-employee")
-    public DeleteEmployeeResponse deleteEmployee(@RequestParam UUID creatorId, @RequestParam UUID employeeIdToDelete) {
-        return this.deleteEmployee.execute(creatorId, employeeIdToDelete);
+    public DeleteEmployeeResponse deleteEmployee(@RequestParam UUID employeeIdToDelete) {
+        return this.deleteEmployee.execute(employeeIdToDelete);
     }
 
     @GetMapping("/{employeeId}")
-    public Employee getEmployeeById(@PathVariable UUID employeeId) {
+    public GetEmployeeByIdResponse getEmployeeById(@PathVariable UUID employeeId) {
         return this.getEmployeeById.execute(employeeId);
     }
 }
