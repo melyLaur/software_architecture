@@ -1,8 +1,13 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
+import SaveEmployeeModal from "~/components/modals/employees/SaveEmployeeModal.vue"
 import {getPaginationRowModel} from '@tanstack/vue-table'
 import type {DropdownMenuItem, TableColumn, TableRow} from '@nuxt/ui'
-import {useEmployeeApi} from "~/services/employees/employee.api";
+import type {Role} from "~/types/role";
+import type {Employee} from "~/types/employee";
+import {useEmployee} from "~/composables/employees/useEmployee";
+import {useNotify} from "~/composables/useNotify";
+import {useModals} from "~/composables/modals/useModals";
 
 definePageMeta({
   layout: 'main-layout',
@@ -10,43 +15,26 @@ definePageMeta({
   roles: ['SECRETARY', 'MANAGER', 'EMPLOYEE']
 })
 
+const {showPopupContinueModal} = useModals()
+const {showSuccess, showError} = useNotify()
+const {isError, fetchEmployees, createEmployee, updateEmployee, deleteEmployee} = useEmployee()
 const table = useTemplateRef('table')
-const {getEmployees} = useEmployeeApi()
 
-type Employee = {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  remainingPark: number
-}
-const data = ref<Employee[]>([
-  {id: '1', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '2', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '3', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '4', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '5', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '6', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '7', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '8', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '9', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '10', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '11', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '12', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '13', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '14', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '15', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '16', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '17', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '18', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '19', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-  {id: '20', firstName: 'John', lastName: 'Doe', email: 'c.lechene+1@email.fr', remainingPark: 3},
-])
+const openCreateEmployeeModal = ref(false)
+const openUpdateEmployeeModal = ref(false)
+const isSlideoverOpen = ref(false)
+const selectedEmployee = ref<Employee>()
+const pagination = ref({
+  pageIndex: 0,
+  pageSize: 15
+})
+
+const data = ref<Employee[]>([] as Employee[])
 const columns: TableColumn<Employee>[] = [
   {
-    accessorKey: 'id',
+    accessorKey: 'employeeId',
     header: '#',
-    cell: ({row}) => `#${row.getValue('id')}`
+    cell: ({row}) => `#${row.getValue('employeeId')}`
   },
   {
     accessorKey: 'firstName',
@@ -64,9 +52,9 @@ const columns: TableColumn<Employee>[] = [
     cell: ({row}) => row.getValue('email')
   },
   {
-    accessorKey: 'remainingPark',
-    header: 'Places restantes',
-    cell: ({row}) => row.getValue('remainingPark')
+    accessorKey: 'role',
+    header: 'Role',
+    cell: ({row}) => formatRole(row.getValue('role'))
   },
 ]
 
@@ -74,41 +62,99 @@ const items = ref<DropdownMenuItem[]>([
   {
     label: 'Modifier',
     icon: 'i-lucide-edit',
+    onSelect: () => {
+      openUpdateEmployeeModal.value = true
+    }
   },
   {
     label: 'Supprimer',
     icon: 'i-lucide-trash-2',
     color: 'error',
-    action: () => {
-      console.log('Delete action triggered')
-      // Implement delete logic here
+    onSelect: () => {
+      onDeleteEmployee();
     }
   },
 ])
 
-const isSlideoverOpen = ref(false)
-const selectedEmployee = ref<Employee | null>(null)
-
-function onSelect(row: TableRow<Employee>, e?: Event) {
-  console.log('Row selected:', row, e)
-  const employeeId = row.id;
-  openEmployeeDetails(employeeId)
-}
-
-function openEmployeeDetails(id: string) {
-  selectedEmployee.value = data.value.find(emp => emp.id === id) || null
-  console.log("selectedEmployee: ", selectedEmployee);
+function onSelect(row: TableRow<Employee>) {
+  selectedEmployee.value = data.value[row.index];
+  console.log(selectedEmployee.value)
   isSlideoverOpen.value = true
 }
 
-const pagination = ref({
-  pageIndex: 0,
-  pageSize: 15
-})
+async function onCreateEmployee(employee: { firstName: string, lastName: string, email: string, role: Role }) {
+  await createEmployee(employee);
+
+  if(isError.value) {
+    showError(`Erreur lors de la création de l'employé (${isError.value}).`);
+    return;
+  }
+
+  showSuccess('Employé créé avec succès.');
+  openCreateEmployeeModal.value = false;
+}
+
+async function onUpdateEmployee(employee: { firstName: string, lastName: string, email: string, role: Role }) {
+  if (!selectedEmployee.value) {
+    showError("Aucun employé sélectionné pour la mise à jour.");
+    return;
+  }
+
+  await updateEmployee(selectedEmployee.value.employeeId, employee);
+  openUpdateEmployeeModal.value = false;
+  selectedEmployee.value = {
+    ...selectedEmployee.value,
+    ...employee
+  }
+
+  if(isError.value) {
+    showError(`Erreur lors de la mise à jour de l'employé (${isError.value}).`);
+    return;
+  }
+
+  showSuccess('Employé mis à jour avec succès.');
+}
+
+function onDeleteEmployee() {
+  if (!selectedEmployee.value) {
+    showError("Aucun employé sélectionné.");
+    return;
+  }
+
+  const instance = showPopupContinueModal('Êtes-vous sûr de vouloir supprimer cet employé ?');
+  instance.result.then(async (result) => {
+    if (result) {
+      try {
+        // Call the delete employee API here
+        await deleteEmployee(selectedEmployee.value!.employeeId);
+        isSlideoverOpen.value = false;
+        data.value = data.value.filter(emp => emp.employeeId !== selectedEmployee.value!.employeeId);
+        selectedEmployee.value = undefined;
+        showSuccess('Employé supprimé avec succès.');
+      } catch (e) {
+        console.error(e);
+        showError("Erreur lors de la suppression de l'employé.");
+      }
+    }
+  });
+}
+
+function formatRole(role: Role): string {
+  switch (role) {
+    case 'EMPLOYEE':
+      return 'Employé';
+    case 'MANAGER':
+      return 'Manager';
+    case 'SECRETARY':
+      return 'Secrétaire';
+    default:
+      return 'Inconnu';
+  }
+}
 
 onMounted(async () => {
   try {
-    data.value = await getEmployees();
+    data.value = await fetchEmployees() as Employee[];
   } catch (e) {
     console.error(e);
   }
@@ -121,7 +167,7 @@ onMounted(async () => {
       <div class="flex items-center justify-between mb-4">
         <h1 class="text-2xl font-bold">Employés</h1>
         <div class="flex items-center space-x-2">
-          <UButton>Nouveau employé</UButton>
+          <UButton @click="openCreateEmployeeModal = true">Nouveau employé</UButton>
         </div>
       </div>
     </div>
@@ -146,9 +192,9 @@ onMounted(async () => {
         />
       </div>
     </div>
-    <USlideover v-model:open="isSlideoverOpen">
+    <USlideover v-model:open="isSlideoverOpen" @close="selectedEmployee = undefined">
       <template #header>
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between w-full">
           <h2 class="text-lg font-semibold">Détails de l'employé</h2>
           <UDropdownMenu
             :content="{
@@ -161,22 +207,47 @@ onMounted(async () => {
                 content: 'w-48'
               }"
           >
-            <UButton color="neutral" icon="i-lucide-menu" label="Open" variant="outline"/>
+            <UButton color="neutral" icon="i-lucide-menu" variant="outline"/>
           </UDropdownMenu>
         </div>
       </template>
       <template #body>
         <div class="h-full">
           <div v-if="selectedEmployee" class="p-4">
-            <h2 class="text-xl font-semibold mb-4">Détails de l'employé</h2>
-            <p><strong>ID:</strong> {{ selectedEmployee.id }}</p>
-            <p><strong>Prénom:</strong> {{ selectedEmployee.firstName }}</p>
-            <p><strong>Nom:</strong> {{ selectedEmployee.lastName }}</p>
-            <p><strong>Email:</strong> {{ selectedEmployee.email }}</p>
-            <p><strong>Places restantes:</strong> {{ selectedEmployee.remainingPark }}</p>
+            <div class="flex justify-between">
+              <div>ID</div>
+              <div class="text-gray-500">{{ selectedEmployee.employeeId }}</div>
+            </div>
+            <div class="flex justify-between mt-2">
+              <div>Prénom</div>
+              <div class="text-gray-500">{{ selectedEmployee.firstName }}</div>
+            </div>
+            <div class="flex justify-between mt-2">
+              <div>Nom</div>
+              <div class="text-gray-500">{{ selectedEmployee.lastName }}</div>
+            </div>
+            <div class="flex justify-between mt-2">
+              <div>Email</div>
+              <div class="text-gray-500">{{ selectedEmployee.email }}</div>
+            </div>
+            <div class="flex justify-between mt-2">
+              <div>Rôle</div>
+              <div class="text-gray-500">{{ formatRole(selectedEmployee.role) }}</div>
+            </div>
           </div>
         </div>
       </template>
     </USlideover>
+    <SaveEmployeeModal
+        v-model:open="openCreateEmployeeModal"
+        type="create"
+        @on-submit="onCreateEmployee($event)"
+    />
+    <SaveEmployeeModal
+        v-model:open="openUpdateEmployeeModal"
+        v-model:employee="selectedEmployee"
+        type="update"
+        @on-submit="onUpdateEmployee($event)"
+    />
   </div>
 </template>
