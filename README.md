@@ -28,3 +28,9 @@ Application web de gestion des employés et des emplacements de parking, basée 
 2. Puis ouvrez un terminal et exécutez :
     ```bash
     docker compose up -d
+   
+Pour générer la documentation technique de l'API, lancez la commande Maven (Java 21) suivante :
+```bash
+   cd api
+   mvn javadoc:javadoc
+
