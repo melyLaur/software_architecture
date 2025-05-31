@@ -2,6 +2,10 @@ package fr.esgi.api.model.reservation.place;
 
 import java.util.Objects;
 
+/**
+ * Represents the physical identifier of a parking place.
+ * A place is uniquely defined by its row (e.g., 'A') and number (e.g., 1).
+ */
 public class PlaceIdentifier {
     private char row;
     private short number;

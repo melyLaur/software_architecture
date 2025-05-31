@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Use case for retrieving all employees.
+ */
 @Service
 public class GetAllEmployees {
     private final EmployeeRepository employeeRepository;
@@ -18,15 +21,22 @@ public class GetAllEmployees {
         this.employeeRepository = employeeRepository;
     }
 
+    /**
+     * Fetches all employees and maps them to response DTOs.
+     *
+     * @return list of employee response DTOs
+     * @throws ApiException if a domain error occurs
+     */
     public List<GetEmployeeResponse> getAll() {
         try {
             List<Employee> employees = employeeRepository.getAll();
-            return employees.stream().map(employee -> new GetEmployeeResponse(
-                    employee.getId(),
-                    employee.getFirstName(),
-                    employee.getLastName(),
-                    employee.getEmail().getValue(),
-                    employee.getRole()
+            return employees.stream()
+                    .map(emp -> new GetEmployeeResponse(
+                            emp.getId(),
+                            emp.getFirstName(),
+                            emp.getLastName(),
+                            emp.getEmail().getValue(),
+                            emp.getRole()
                     ))
                     .toList();
         } catch (DomainException e) {

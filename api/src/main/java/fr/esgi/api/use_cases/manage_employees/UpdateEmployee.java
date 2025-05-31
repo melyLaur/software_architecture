@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+/**
+ * Use case for updating an existing employee's information.
+ */
 @Service
 public class UpdateEmployee {
     private final EmployeeRepository employeeRepository;
@@ -21,6 +24,15 @@ public class UpdateEmployee {
         this.employeeRepository = employeeRepository;
     }
 
+    /**
+     * Executes the update of an employee with the given ID.
+     *
+     * @param employeeId the UUID of the employee to update
+     * @param updateEmployeeRequest the new values for the employee
+     * @return the updated employee in response format
+     * @throws ApiException with 404 if the employee does not exist
+     * @throws ApiException with 400 if domain validation fails
+     */
     public UpdateEmployeeResponse execute(UUID employeeId, UpdateEmployeeRequest updateEmployeeRequest) {
         try {
             Employee employee = this.employeeRepository.getById(employeeId);

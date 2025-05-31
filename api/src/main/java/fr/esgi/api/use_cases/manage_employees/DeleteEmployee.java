@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+/**
+ * Use case for removing an existing employee.
+ */
 @Service
 public class DeleteEmployee {
     private final EmployeeRepository employeeRepository;
@@ -14,6 +17,12 @@ public class DeleteEmployee {
         this.employeeRepository = employeeRepository;
     }
 
+    /**
+     * Deletes the employee identified by the given ID.
+     *
+     * @param employeeIdToDelete the ID of the employee to remove
+     * @return an empty response indicating successful deletion
+     */
     public DeleteEmployeeResponse execute(UUID employeeIdToDelete) {
         this.employeeRepository.deleteById(employeeIdToDelete);
         return new DeleteEmployeeResponse();

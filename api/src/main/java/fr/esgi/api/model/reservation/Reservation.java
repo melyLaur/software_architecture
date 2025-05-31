@@ -7,6 +7,10 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Represents a reservation made by an employee for a parking place.
+ * Encapsulates reservation details such as the employee, place, date, and check-in status.
+ */
 public class Reservation {
     private UUID id;
     private Employee employee;

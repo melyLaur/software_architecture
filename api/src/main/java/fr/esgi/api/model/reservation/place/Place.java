@@ -3,6 +3,11 @@ package fr.esgi.api.model.reservation.place;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Represents a place (parking spot) in the reservation system.
+ * Each place has a unique identifier, a physical identifier (row/number),
+ * a type (NORMAL, ELECTRICAL), and a current status (AVAILABLE, UNAVAILABLE).
+ */
 public class Place {
     private UUID id;
     private PlaceIdentifier identifier;

@@ -15,6 +15,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Use case for retrieving all upcoming reservations of an employee.
+ */
 @Service
 public class GetEmployeeReservations {
     private final EmployeeRepository employeeRepository;
@@ -23,6 +26,14 @@ public class GetEmployeeReservations {
         this.employeeRepository = employeeRepository;
     }
 
+
+    /**
+     * Retrieve all reservations of an employee that are not in the past and not yet checked in.
+     *
+     * @param employeeId the UUID of the employee
+     * @return a list of GetReservationResponse DTOs, sorted by date
+     * @throws ApiException with 404 status if employee not found
+     */
     public List<GetReservationResponse> getAll(UUID employeeId) {
         try {
             LocalDate now = LocalDate.now();
