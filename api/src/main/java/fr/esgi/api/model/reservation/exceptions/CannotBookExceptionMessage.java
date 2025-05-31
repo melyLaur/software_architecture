@@ -4,7 +4,7 @@ public enum CannotBookExceptionMessage {
     MAXIMUM_POSSIBLE_RESERVATION_DAYS_EXCEED("Maximum number of bookings reached."),
     RESERVATION_ALREADY_EXITS("Reservation already exist. "),
     INVALID_DATE("Cannot book in the past. The date must be today or later."),
-    INVALID_WORKING_DAYS("Cannot book in the past. The date must be today or later."),
+    INVALID_WORKING_DAYS("Can't book if it's not a working day."),
     ;
 
     private final String message;

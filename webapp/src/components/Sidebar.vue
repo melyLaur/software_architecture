@@ -11,7 +11,7 @@ const employees = ref<AuthUser[]>([
   { id: '00000000-0000-0000-0000-000000000002', name: 'Jean Dumont', email: 'c.lec@fe.fr', role: 'SECRETARY' },
   { id: '00000000-0000-0000-0000-000000000003', name: 'Jean Dumont', email: 'c.lec@fe.fr', role: 'MANAGER' },
 ])
-const selectedEmployee = ref(employees.value[0].role)
+const selectedEmployee = ref(employees.value[1].role)
 
 function changeEmployee() {
   const employee = employees.value.find(emp => emp.role === selectedEmployee.value);

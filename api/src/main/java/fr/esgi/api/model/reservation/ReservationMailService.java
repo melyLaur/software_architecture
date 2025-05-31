@@ -33,23 +33,21 @@ public class ReservationMailService {
 
     private String managerBody(Employee employee, Reservation reservation, String type) {
         return String.format("""
-                Bonjour %s %s,
-
-                Votre réservation MANAGER a bien été enregistrée :
-                  • Du    : %s
-                  • Au    : %s
-                  • Place : %s
-                  • Type  : %s
-
-                Ce QR-code / e-mail est valable chaque jour jusqu’à 11 h.
-                Après cette heure, la place peut être réaffectée.
-
-                — Park Slot
-                """,
+                        Bonjour %s %s,
+                        
+                        Votre réservation MANAGER a bien été enregistrée :
+                          • Le    : %s
+                          • Place : %s
+                          • Type  : %s
+                        
+                        Ce QR-code / e-mail est valable chaque jour jusqu’à 11 h.
+                        Après cette heure, la place peut être réaffectée.
+                        
+                        — Park Slot
+                        """,
                 employee.getFirstName(),
                 employee.getLastName(),
-                reservation.getStartDate().format(DATE_FMT),
-                reservation.getEndDate().format(DATE_FMT),
+                reservation.getBookedFor().format(DATE_FMT),
                 reservation.getPlace().getIdentifier(),
                 type
         );
@@ -57,23 +55,20 @@ public class ReservationMailService {
 
     private String employeeBody(Employee employee, Reservation reservation, String type) {
         return String.format("""
-                Bonjour %s %s,
-
-                Votre réservation a bien été enregistrée :
-                  • Date  : %s
-                  • Place : %s
-                  • Type  : %s
-
-                Ce QR-code est valable jusqu’à 11 h le jour de la réservation.
-                Au-delà, la place redevient disponible.
-
-                — Park Slot
-                """,
+                        Bonjour %s %s,
+                        
+                        Votre réservation a bien été enregistrée :
+                          • Date  : %s
+                          • Place : %s
+                          • Type  : %s
+                        
+                        
+                        """,
                 employee.getFirstName(),
                 employee.getLastName(),
-                reservation.getStartDate().format(DATE_FMT),
+                reservation.getBookedFor().format(DATE_FMT),
                 reservation.getPlace().getIdentifier(),
-                type
-        );
+                type);
+
     }
 }

@@ -5,6 +5,12 @@ import jakarta.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * JPA entity representing a physical place.
+ * <p>
+ * Each place has a unique identifier, position (row and number),
+ * a type (e.g., ELECTRICAL), and a current status (e.g., UNAVAILABLE).
+ */
 @Entity
 @Table(name = "places")
 public class PlaceEntity {

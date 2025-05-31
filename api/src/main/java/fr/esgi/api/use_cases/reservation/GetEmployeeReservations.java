@@ -11,9 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Use case for retrieving all upcoming reservations of an employee.
+ */
 @Service
 public class GetEmployeeReservations {
     private final EmployeeRepository employeeRepository;
@@ -22,6 +26,14 @@ public class GetEmployeeReservations {
         this.employeeRepository = employeeRepository;
     }
 
+
+    /**
+     * Retrieve all reservations of an employee that are not in the past and not yet checked in.
+     *
+     * @param employeeId the UUID of the employee
+     * @return a list of GetReservationResponse DTOs, sorted by date
+     * @throws ApiException with 404 status if employee not found
+     */
     public List<GetReservationResponse> getAll(UUID employeeId) {
         try {
             LocalDate now = LocalDate.now();
@@ -30,7 +42,8 @@ public class GetEmployeeReservations {
             List<Reservation> reservations = employee
                     .getReservations()
                     .stream()
-                    .filter(reservation -> !reservation.getStartDate().isBefore(now))
+                    .filter(reservation -> !reservation.getBookedFor().isBefore(now) && !reservation.isCheckedIn())
+                    .sorted(Comparator.comparing(Reservation::getBookedFor))
                     .toList();
             return reservations.stream().map(this::mapToGetReservationResponse).toList();
         } catch (DomainException e) {
@@ -43,7 +56,7 @@ public class GetEmployeeReservations {
 
         return new GetReservationResponse(
                 reservation.getId(),
-                reservation.getStartDate(),
+                reservation.getBookedFor(),
                 reservation.getPlace().getIdentifier().toString(),
                 isElectric
         );

@@ -9,7 +9,7 @@ import 'dayjs/locale/fr';
 dayjs.locale('fr');
 
 const route = useRoute();
-const {isLoading, isError, getReservationSlotBy, checkInReservation} = useReservation()
+const {isLoading, isError, getReservationSlotById, checkInReservation} = useReservation()
 
 const image = new URL('~/assets/images/parking.jpeg', import.meta.url).href;
 const logo = new URL('~/assets/images/parkslot.png', import.meta.url).href;
@@ -17,18 +17,18 @@ const slot = ref<Reservation>();
 
 
 onMounted(async () => {
-  const token = String(route.query.token);
-  slot.value = await getReservationSlotBy();
+  const reservationId = String(route.query.reservationId);
+  slot.value = await getReservationSlotById(reservationId);
   if (slot.value) {
-    await checkInReservation(token);
+    await checkInReservation(reservationId);
   }
 });
 </script>
 
 <template>
-  <div class="h-screen w-screen bg-black text-white flex p-4 pb-12" style="min-height: 710px; min-width: 310px; max-height: 1000px; max-width: 450px; overflow: hidden;">
+  <div class="h-screen w-screen bg-black text-white flex justify-center p-4 pb-12" style="min-height: 710px; min-width: 310px; max-height: 1000px; overflow: hidden;">
 
-    <div v-if="!slot" class="flex flex-col space-y-10 w-full max-w-2xl px-4 text-center">
+    <div v-if="!slot" class="flex flex-col space-y-10 w-full max-w-2xl px-4 text-center" style="max-width: 450px">
       <img :src="logo" alt="Logo" class="w-64 h-auto mx-auto mb-4"/>
 
       <h1 class="text-3xl font-bold text-center">Réservation non confirmée</h1>
@@ -40,9 +40,12 @@ onMounted(async () => {
         <p class="text-center">Aucune réservation trouvée pour ce lien de confirmation. Veuillez vérifier le lien ou
           contacter le support.</p>
       </div>
+      <div class="flex justify-center mt-4">
+        <UButton color="primary" @click="$router.push('/reservations')">Retour aux réservations</UButton>
+      </div>
     </div>
 
-    <div v-else-if="isError === true" class="flex flex-col space-y-8 w-full max-w-2xl px-4">
+    <div v-else-if="isError === true" class="flex flex-col space-y-8 w-full max-w-2xl px-4" style="max-width: 450px">
       <img :src="logo" alt="Logo" class="w-64 h-auto mx-auto mb-4"/>
 
       <h1 class="text-2xl font-bold text-center">Réservation non confirmée</h1>
@@ -85,10 +88,13 @@ onMounted(async () => {
       </div>
       <p class="text-center">Votre réservation n'a pas pu être confirmée. Veuillez vérifier le lien de confirmation ou
         contacter le support.</p>
+      <div class="flex justify-center mt-4">
+        <UButton color="primary" @click="$router.push('/reservations')">Retour aux réservations</UButton>
+      </div>
 
     </div>
 
-    <div v-else class="flex flex-col space-y-8 w-full max-w-2xl px-4">
+    <div v-else class="flex flex-col space-y-8 w-full max-w-2xl px-4" style="max-width: 450px">
       <img :src="logo" alt="Logo" class="w-64 h-auto mx-auto mb-4"/>
 
       <h1 class="text-3xl font-bold text-center">Réservation confirmé</h1>
@@ -133,6 +139,9 @@ onMounted(async () => {
       <p class="text-center px-8">
         Votre réservation a été confirmée avec succès.
       </p>
+      <div class="flex justify-center mt-4">
+        <UButton color="primary" @click="$router.push('/reservations')">Retour aux réservations</UButton>
+      </div>
     </div>
 
   </div>

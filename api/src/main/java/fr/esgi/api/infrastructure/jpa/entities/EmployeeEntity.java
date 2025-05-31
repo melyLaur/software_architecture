@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * JPA entity representing an employee in the system.
+ * <p>
+ * An employee has a unique identifier, a name, a role,
+ * an email address, and a list of reservations.
+ */
 @Entity
 @Table(name = "employees")
 public class EmployeeEntity {

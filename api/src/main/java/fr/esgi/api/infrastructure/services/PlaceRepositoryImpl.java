@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * JPA-based implementation of PlaceRepository.
+ * Handles retrieval and mapping of available places based on type and status.
+ */
 @Service
 public class PlaceRepositoryImpl implements PlaceRepository {
     private final PlaceJpaRepository placeJpaRepository;
@@ -21,6 +25,13 @@ public class PlaceRepositoryImpl implements PlaceRepository {
         this.placeMapper = placeMapper;
     }
 
+    /**
+     * Fetch all available places of a given type.
+     * Only places with status AVAILABLE are returned.
+     *
+     * @param type the type of place (NORMAL, ELECTRICAL)
+     * @return list of available domain Place objects
+     */
     @Override
     public List<Place> getAvailablePlaces(PlaceType type) {
         List<PlaceEntity> places = this.placeJpaRepository.findAllByStatusAndType(PlaceStatus.AVAILABLE.name(), type.name());

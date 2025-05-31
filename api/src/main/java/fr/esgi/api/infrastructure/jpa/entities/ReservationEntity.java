@@ -6,6 +6,15 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * JPA entity representing a reservation of a place by an employee.
+ * <p>
+ * Each reservation is associated with:
+ * - an employee who made the reservation
+ * - a place that was reserved
+ * - a specific date for which the reservation was booked
+ * - a flag indicating whether the employee has checked in
+ */
 @Entity
 @Table(name = "reservations")
 public class ReservationEntity {
@@ -23,11 +32,8 @@ public class ReservationEntity {
     @JoinColumn(name = "place_id", nullable = false)
     private PlaceEntity place;
 
-    @Column(name = "start_date")
-    private LocalDate startDate;
-
-    @Column(name = "end_date")
-    private LocalDate endDate;
+    @Column(name = "booked_for")
+    private LocalDate bookedFor;
 
     @Column(name = "is_checked_in")
     private boolean checkedIn;
@@ -56,22 +62,6 @@ public class ReservationEntity {
         this.place = place;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
     public boolean checkedIn() {
         return checkedIn;
     }
@@ -80,7 +70,13 @@ public class ReservationEntity {
         this.checkedIn = checkedIn;
     }
 
+    public LocalDate getBookedFor() {
+        return bookedFor;
+    }
 
+    public void setBookedFor(LocalDate bookedFor) {
+        this.bookedFor = bookedFor;
+    }
 
     @Override
     public boolean equals(Object o) {

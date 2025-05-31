@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+/**
+ * Use case for canceling a reservation by its unique identifier.
+ */
 @Service
 public class CancelReservation {
     private final ReservationRepository reservationRepository;
@@ -13,6 +16,11 @@ public class CancelReservation {
         this.reservationRepository = reservationRepository;
     }
 
+    /**
+     * Cancels the reservation associated with the provided ID.
+     *
+     * @param reservationId the UUID of the reservation to cancel
+     */
     public void process(UUID reservationId) {
         reservationRepository.delete(reservationId);
     }

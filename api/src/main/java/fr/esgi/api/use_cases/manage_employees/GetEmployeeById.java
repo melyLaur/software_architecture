@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+/**
+ * Use case for retrieving a single employee by their ID.
+ */
 @Service
 public class GetEmployeeById {
     private final EmployeeRepository employeeRepository;
@@ -18,6 +21,13 @@ public class GetEmployeeById {
         this.employeeRepository = employeeRepository;
     }
 
+    /**
+     * Fetches the employee with the given ID and maps to a response DTO.
+     *
+     * @param employeeId the UUID of the employee to retrieve
+     * @return response DTO containing the employee's data
+     * @throws ApiException with 404 status if no such employee exists
+     */
     public GetEmployeeResponse execute(UUID employeeId) {
         try {
             Employee employee = this.employeeRepository.getById(employeeId);
