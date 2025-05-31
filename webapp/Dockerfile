@@ -20,9 +20,8 @@ RUN npm run build
 FROM base
 
 ENV PORT=$PORT
-#ENV NODE_ENV=production
 
 COPY --from=build /src/.output /src/.output
-# COPY --from=build /src/node_modules /src/node_modules à décommenter si on utilise des modules non bundleables (ex: Firebase Admin SDK)
+COPY --from=build /src/node_modules /src/node_modules
 
 CMD [ "node", ".output/server/index.mjs" ]
