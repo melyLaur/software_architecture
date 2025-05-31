@@ -13,6 +13,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for managing business logic related to reservations.
+ * Handles rules for booking validation and available place selection.
+ */
 @Service
 public class ReservationService {
     private static final int EMPLOYEE_MAXIMUM_POSSIBLE_RESERVATION_DAYS = 5;
@@ -26,6 +30,17 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
+    /**
+     * Finds a single available place for an employee.
+     * Ensures all reservation constraints are respected before returning a place.
+     *
+     * @param employee the employee requesting a reservation
+     * @param electricalPlaceNeeded whether an electrical place is required
+     * @param bookedFor the target reservation date
+     * @return a valid and available Place
+     * @throws CannotBookException if constraints are violated
+     * @throws NoPlaceAvailableException if no place is found
+     */
     public Place findAvailablePlaceForEmployee(Employee employee, boolean electricalPlaceNeeded, LocalDate bookedFor) {
         validateReservationConstraints(bookedFor);
 
@@ -46,12 +61,25 @@ public class ReservationService {
         return availablePlaces.getFirst();
     }
 
+    /**
+     * Finds a continuous available place for a manager over multiple days.
+     *
+     * @param employee the manager requesting the reservation
+     * @param electricalPlaceNeeded whether an electrical place is required
+     * @param bookedFor start date
+     * @param numberDays duration in days
+     * @return a valid Place available for all requested days
+     * @throws CannotBookException or NoPlaceAvailableException
+     */
     public Place findAvailablePlaceForManager(Employee employee, boolean electricalPlaceNeeded, LocalDate bookedFor, Integer numberDays) {
         validateReservationConstraints(bookedFor);
         validateManagerConstraints(employee, bookedFor, numberDays);
         return findAvailablePlaceForAMonth(electricalPlaceNeeded, bookedFor, numberDays);
     }
 
+    /**
+     * Tries to find a place available for all the requested days in a row.
+     */
     private Place findAvailablePlaceForAMonth(boolean electricalPlaceNeeded, LocalDate bookedFor, Integer numberDays) {
         PlaceType placeType = electricalPlaceNeeded ? PlaceType.ELECTRICAL : PlaceType.NORMAL;
         List<Place> allPlaces = this.placeRepository.getAvailablePlaces(placeType);
@@ -75,6 +103,9 @@ public class ReservationService {
         throw new NoPlaceAvailableException();
     }
 
+    /**
+     * Filters all available places and keeps only those that are not booked on the given date.
+     */
     private List<Place> findAvailablePlaces(boolean electricalPlaceNeeded, LocalDate bookedFor) {
         List<Place> availablePlacesForGivenDate = new ArrayList<>();
         PlaceType placeType = electricalPlaceNeeded ? PlaceType.ELECTRICAL : PlaceType.NORMAL;
@@ -91,12 +122,18 @@ public class ReservationService {
         return availablePlacesForGivenDate;
     }
 
+    /**
+     * Validates that the booking date is not in the past.
+     */
     private void validateReservationConstraints(LocalDate bookedFor) {
         if (bookedFor.isBefore(LocalDate.now())) {
             throw new CannotBookException(CannotBookExceptionMessage.INVALID_DATE);
         }
     }
 
+    /**
+     * Validates the employee's constraints (working day, max limit, no duplicate).
+     */
     private void validateEmployeeConstraints(List<Reservation> employeeReservations, LocalDate bookedFor) {
         if (!isWorkingDay(bookedFor)) {
             throw new CannotBookException(CannotBookExceptionMessage.INVALID_WORKING_DAYS);
@@ -113,6 +150,9 @@ public class ReservationService {
         }
     }
 
+    /**
+     * Validates manager-specific constraints (max 30 days, no overlapping).
+     */
     private void validateManagerConstraints(Employee employee, LocalDate bookedFor, Integer numberDays) {
         if (employee.getReservations().size() + numberDays >= MANAGER_POSSIBLE_RESERVATION_DAYS) {
             throw new CannotBookException(CannotBookExceptionMessage.MAXIMUM_POSSIBLE_RESERVATION_DAYS_EXCEED);
@@ -127,6 +167,9 @@ public class ReservationService {
         }
     }
 
+    /**
+     * Checks if the given date is a weekday (Monday to Friday).
+     */
     private boolean isWorkingDay(LocalDate date) {
         int dayOfWeek = date.getDayOfWeek().getValue();
         return dayOfWeek >= 1 && dayOfWeek <= 5;

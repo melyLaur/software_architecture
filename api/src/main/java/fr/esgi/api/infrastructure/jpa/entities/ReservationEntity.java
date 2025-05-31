@@ -6,6 +6,15 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * JPA entity representing a reservation of a place by an employee.
+ * <p>
+ * Each reservation is associated with:
+ * - an employee who made the reservation
+ * - a place that was reserved
+ * - a specific date for which the reservation was booked
+ * - a flag indicating whether the employee has checked in
+ */
 @Entity
 @Table(name = "reservations")
 public class ReservationEntity {

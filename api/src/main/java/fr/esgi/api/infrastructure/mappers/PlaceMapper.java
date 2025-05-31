@@ -7,8 +7,17 @@ import fr.esgi.api.model.reservation.place.PlaceStatus;
 import fr.esgi.api.model.reservation.place.PlaceType;
 import org.springframework.stereotype.Service;
 
+/**
+ * Converts between PlaceEntity (JPA) and Place (domain) objects.
+ */
 @Service
 public class PlaceMapper {
+    /**
+     * Map a JPA PlaceEntity into a domain Place object.
+     *
+     * @param entity the JPA PlaceEntity to convert
+     * @return a populated domain Place object
+     */
     public Place toDomain(PlaceEntity entity) {
         return new Place(
                 entity.getId(),
@@ -18,6 +27,12 @@ public class PlaceMapper {
         );
     }
 
+    /**
+     * Map a domain Place object into a JPA PlaceEntity for persistence.
+     *
+     * @param place the domain Place to convert
+     * @return a new PlaceEntity ready to be saved
+     */
     public PlaceEntity toEntity(Place place) {
         PlaceEntity entity = new PlaceEntity();
         entity.setNumber(place.getIdentifier().getNumber());

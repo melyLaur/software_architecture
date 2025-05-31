@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Use case for handling reservations, both for employees and managers.
+ */
 @Service
 public class MakeReservation {
     private final ReservationService reservationService;
@@ -36,6 +39,14 @@ public class MakeReservation {
         this.reservationMailService = reservationMailService;
     }
 
+    /**
+     * Process a reservation request for a standard employee.
+     *
+     * @param employeeId the UUID of the employee
+     * @param createReservationEmployeeRequest the reservation details (date, type)
+     * @return the created reservation response
+     * @throws ApiException if the employee is not found or the reservation is invalid
+     */
     public GetReservationResponse processForEmployee(UUID employeeId, CreateReservationEmployeeRequest createReservationEmployeeRequest) {
         boolean electricalPlaceNeeded = createReservationEmployeeRequest.electricalPlaceNeeded();
         LocalDate bookedFor = createReservationEmployeeRequest.bookedFor();
@@ -54,6 +65,14 @@ public class MakeReservation {
         }
     }
 
+    /**
+     * Process a reservation request for a manager across multiple days.
+     *
+     * @param employeeId the UUID of the manager
+     * @param createReservationManagerRequest the reservation request including start date and number of days
+     * @return list of created reservations
+     * @throws ApiException if constraints are violated
+     */
     public List<GetReservationResponse> processForManager(UUID employeeId, @Valid CreateReservationManagerRequest createReservationManagerRequest) {
         boolean electricalPlaceNeeded = createReservationManagerRequest.electricalPlaceNeeded();
         LocalDate bookedFor = createReservationManagerRequest.bookedFor();

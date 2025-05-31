@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+/**
+ * Use case for validating (checking-in) a reservation.
+ */
 @Service
 public class CheckInReservation {
     private final ReservationRepository reservationRepository;
@@ -17,6 +20,12 @@ public class CheckInReservation {
         this.reservationRepository = reservationRepository;
     }
 
+    /**
+     * Marks the reservation as checked-in by its unique identifier.
+     *
+     * @param reservationId the UUID of the reservation to check-in
+     * @throws ApiException if the reservation is not found or invalid
+     */
     public void validate(UUID reservationId) {
         try {
             Reservation reservation = reservationRepository.findById(reservationId);

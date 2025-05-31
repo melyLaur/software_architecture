@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+/**
+ * REST controller for reservation check-in operations.
+ */
 @RestController
 @CrossOrigin(origins = "*")
 public class CheckInReservationController {
@@ -17,6 +20,11 @@ public class CheckInReservationController {
         this.checkInReservation = checkInReservation;
     }
 
+    /**
+     * Marks a reservation as checked-in.
+     *
+     * @param id the UUID of the reservation to check in
+     */
     @PatchMapping(value = "reservations/{id}/check-in")
     public void validate(@PathVariable UUID id) {
         this.checkInReservation.validate(id);
